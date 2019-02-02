@@ -1,0 +1,44 @@
+{
+    "name": "sparkplug/momoapi-php",
+    "description": "MTN MoMo PHP package",
+    "type": "library",
+    "require": {
+        "php": ">=7.0.0",
+        "guzzlehttp/guzzle": "^6.3"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^8.0"
+    },
+    "authors": [
+        {
+            "name": "Kevin Barasa",
+            "email": "kevin.barasa001@gmail.com",
+            "homepage": "https://github.com/bqevin"
+        },
+        {
+            "name": "SparkPlug",
+            "email": "ray@sparkpl.ug",
+            "homepage": "https://sparkpl.ug"
+        }
+    ],
+  "autoload": {
+    "psr-4": {
+      "SparkPlug\\MomoApi\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "SparkPlug\\MomoApi\\": [
+        "tests/"
+      ]
+    }
+  },
+  "scripts": {
+    "test": [
+      "vendor/bin/phpunit"
+    ],
+    "coverage": [
+      "php -dzend_extension=xdebug.so ./vendor/bin/phpunit --coverage-text --coverage-html=build/coverage"
+    ]
+  }
+}
