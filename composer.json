@@ -2,6 +2,8 @@
     "name": "sparkplug/momoapi-php",
     "description": "MTN MoMo PHP package",
     "type": "library",
+    "homepage": "https://github.com/sparkplug/momoapi-php",
+    "license": "MIT",
     "require": {
         "php": ">=7.0.0",
         "guzzlehttp/guzzle": "^6.3"
