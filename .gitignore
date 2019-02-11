@@ -1,4 +1,6 @@
 /vendor/
 /.idea/
-
-/phpunit.xml
+/build
+composer.lock
+phpcs.xml
+phpunit.xml
