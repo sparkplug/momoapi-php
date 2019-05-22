@@ -1,34 +1,35 @@
-dist: trusty
+sudo: false
 language: php
 
 php:
-- 7.0
-- hhvm
+  - 5.4
+  - 5.5
+  - 5.6
+  - 7.0
+  - 7.1
+  - 7.2
+  - 7.3
 
-# This triggers builds to run on the new TravisCI infrastructure.
-# See: http://docs.travis-ci.com/user/workers/container-based-infrastructure/
-sudo: false
+
 
 ## Cache composer
 cache:
   directories:
   - $HOME/.composer/cache
 
-matrix:
-  include:
-  - php: 7.0
-    env: 'COMPOSER_FLAGS="--prefer-stable --prefer-lowest"'
+env:
+  matrix:
+    - AUTOLOAD=1
+    - AUTOLOAD=0
+
+before_install:
+  # Install various build dependencies. We use `travis_retry` because Composer
+  # will occasionally fail intermittently.
+  - travis_retry composer install
 
 before_script:
 - travis_retry composer update ${COMPOSER_FLAGS} --no-interaction --prefer-dist
 
-script:
-- vendor/bin/phpcs --standard=psr2 src/
-- vendor/bin/phpunit --coverage-text --coverage-clover=coverage.clover
+script: ./build.php ${AUTOLOAD}
 
-after_script:
-- |
-  if [[ "$TRAVIS_PHP_VERSION" != 'hhvm' ]]; then
-    wget https://scrutinizer-ci.com/ocular.phar
-    php ocular.phar code-coverage:upload --format=php-clover coverage.clover
-  fi
+after_script: ./vendor/bin/coveralls -v
