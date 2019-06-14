@@ -1,7 +1,7 @@
 <?php
 namespace MomoApi\models;
 
-class LoginBody implements JsonSerializable
+class LoginBody implements \JsonSerializable
 {
 
 public $user_id;

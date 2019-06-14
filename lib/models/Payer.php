@@ -1,7 +1,7 @@
 <?php
 namespace MomoApi\models;
 
-class Payer implements JsonSerializable
+class Payer implements \JsonSerializable
 {
 
 public $partyIdType;

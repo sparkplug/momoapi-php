@@ -1,7 +1,7 @@
 <?php
 
 namespace MomoApi\models;
-class Transfer  implements JsonSerializable
+class Transfer  implements \JsonSerializable
 {
 
 

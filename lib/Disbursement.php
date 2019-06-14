@@ -2,7 +2,7 @@
 
 namespace MomoApi;
 
-class Disbursement extends ApiRequest
+class Disbursement extends  ApiRequest
 {
 
 

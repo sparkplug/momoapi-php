@@ -1,7 +1,7 @@
 <?php
 namespace MomoApi\models;
 
-class AccessToken implements JsonSerializable
+class AccessToken implements \JsonSerializable
 {
 
 public $access_token;

@@ -1,9 +1,8 @@
 <?php
 
 
-require_once('../init.php');
+require_once("Collection.php");
 
 
-
-$coll = Collection::getToken();
+$coll = \MomoApi\Collection::getToken();
 echo $coll;

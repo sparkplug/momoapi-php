@@ -3,7 +3,7 @@
 namespace MomoApi\models;
 
 
-class Account  implements JsonSerializable
+class Account  implements \JsonSerializable
 {
 
 

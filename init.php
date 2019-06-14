@@ -38,10 +38,9 @@ require(dirname(__FILE__) . '/lib/models/Transfer.php');
 
 
 
-
+require(dirname(__FILE__) . '/lib/ApiRequest.php');
 require(dirname(__FILE__) . '/lib/ApiResponse.php');
 require(dirname(__FILE__) . '/lib/Disbursement.php');
-require(dirname(__FILE__) . '/lib/ApiRequest.php');
 require(dirname(__FILE__) . '/lib/Remittance.php');
 require(dirname(__FILE__) . '/lib/Provision.php');
 require(dirname(__FILE__) . '/lib/Collection.php');

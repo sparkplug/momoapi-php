@@ -1,7 +1,7 @@
 <?php
 namespace MomoApi\models;
 
-class Balance  implements JsonSerializable
+class Balance  implements \JsonSerializable
 {
 
   public $description;
