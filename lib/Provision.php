@@ -81,5 +81,11 @@ class Provision
     }
 }
 
+if (!debug_backtrace()) {
+
+    $obj = new Provision();
+    $obj->getCredentials()();
+}
+
 
 
