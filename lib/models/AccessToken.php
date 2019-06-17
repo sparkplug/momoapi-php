@@ -30,4 +30,8 @@ public  $expires_in;
         return $data;
     }
 
+    public function getToken(){
+        return $this->access_token;
+    }
+
 }

@@ -162,7 +162,7 @@ class CurlClient implements ClientInterface
 
     // END OF USER DEFINED TIMEOUTS
 
-    public function request($method, $absUrl, $headers, $params, $hasFile)
+    public function request($method, $absUrl, $headers, $params)
     {
         $method = strtolower($method);
 
@@ -170,7 +170,7 @@ class CurlClient implements ClientInterface
         if (is_callable($this->defaultOptions)) { // call defaultOptions callback, set options to return value
             $opts = call_user_func_array($this->defaultOptions, func_get_args());
             if (!is_array($opts)) {
-                throw new Error\Api("Non-array value returned by defaultOptions CurlClient callback");
+                throw new Error\MomoApiError("Non-array value returned by defaultOptions CurlClient callback");
             }
         } elseif (is_array($this->defaultOptions)) { // set default curlopts from array
             $opts = $this->defaultOptions;
@@ -179,11 +179,7 @@ class CurlClient implements ClientInterface
         $params = Util\Util::objectsToIds($params);
 
         if ($method == 'get') {
-            if ($hasFile) {
-                throw new Error\Api(
-                    "Issuing a GET request with a file parameter"
-                );
-            }
+
             $opts[CURLOPT_HTTPGET] = 1;
             if (count($params) > 0) {
                 $encoded = Util\Util::encodeParameters($params);
@@ -191,7 +187,7 @@ class CurlClient implements ClientInterface
             }
         } elseif ($method == 'post') {
             $opts[CURLOPT_POST] = 1;
-            $opts[CURLOPT_POSTFIELDS] = $hasFile ? $params : Util\Util::encodeParameters($params);
+            $opts[CURLOPT_POSTFIELDS] =  Util\Util::encodeParameters($params);
         } elseif ($method == 'delete') {
             $opts[CURLOPT_CUSTOMREQUEST] = 'DELETE';
             if (count($params) > 0) {
@@ -199,16 +195,10 @@ class CurlClient implements ClientInterface
                 $absUrl = "$absUrl?$encoded";
             }
         } else {
-            throw new Error\Api("Unrecognized method $method");
+            throw new Error\MomoApiError("Unrecognized method $method");
         }
 
-        // It is only safe to retry network failures on POST requests if we
-        // add an Idempotency-Key header
-        if (($method == 'post') && (MomoApi::$maxNetworkRetries > 0)) {
-            if (!$this->hasHeader($headers, "Idempotency-Key")) {
-                array_push($headers, 'Idempotency-Key: ' . $this->randomGenerator->uuid());
-            }
-        }
+
 
         // Create a callback to capture HTTP headers for the response
         $rheaders = new Util\CaseInsensitiveArray();
@@ -243,10 +233,13 @@ class CurlClient implements ClientInterface
         $opts[CURLOPT_TIMEOUT] = $this->timeout;
         $opts[CURLOPT_HEADERFUNCTION] = $headerCallback;
         $opts[CURLOPT_HTTPHEADER] = $headers;
-        $opts[CURLOPT_CAINFO] = MomoApi::getCABundlePath();
-        if (!MomoApi::getVerifySslCerts()) {
-            $opts[CURLOPT_SSL_VERIFYPEER] = false;
-        }
+
+        $opts[CURLOPT_VERBOSE] = 1;
+
+        $opts[CURLOPT_SSL_VERIFYHOST] = false;
+        $opts[CURLOPT_SSL_VERIFYPEER] = false;
+
+
 
         if (!isset($opts[CURLOPT_HTTP_VERSION]) && $this->getEnableHttp2()) {
             // For HTTPS requests, enable HTTP/2, if supported

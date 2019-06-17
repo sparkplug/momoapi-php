@@ -45,3 +45,5 @@ require(dirname(__FILE__) . '/lib/Remittance.php');
 require(dirname(__FILE__) . '/lib/Provision.php');
 require(dirname(__FILE__) . '/lib/Collection.php');
 
+require(dirname(__FILE__) . '/lib/test.php');
+

@@ -91,7 +91,20 @@ class MomoApi
      */
     public static function getBaseUrl()
     {
-        return self::$baseUrl || getenv("BASE_URL") || "https://ericssonbasicapi2.azure-api.net" ;
+        $burl = getenv("BASE_URL");
+
+        if(isset(self::$baseUrl ))
+        {
+            return self::$baseUrl;
+        }
+
+        else if($burl)
+        {
+            return $burl;
+        }
+        else{
+        return "https://ericssonbasicapi2.azure-api.net" ;
+        }
     }
 
 
@@ -112,7 +125,19 @@ class MomoApi
      */
     public static function getCurrency()
     {
-        return self::$currency || getenv("CURRENCY") || "UGX" ;
+
+        $arg = getenv("CURRENCY");
+
+        if(isset(self::$currency))
+        {
+            return self::$currency;
+        }
+
+        if($arg)
+        {
+            return $arg;
+        }
+        return "UGX" ;
     }
 
 
@@ -132,7 +157,19 @@ class MomoApi
      */
     public static function getTargetEnvironment()
     {
-        return self::$targetEnvironment || getenv("TARGET_ENVIRONMENT") || "sandbox" ;;
+
+        $targ=  getenv("TARGET_ENVIRONMENT");
+        if(isset(self::$targetEnvironment))
+        {
+            return self::$targetEnvironment;
+        }
+
+        if($targ)
+        {
+            return  $targ;
+        }
+
+        return "sandbox";
     }
 
 
@@ -153,7 +190,19 @@ class MomoApi
      */
     public static function getCollectionApiSecret()
     {
-        return self::$collectionApiSecret || getenv("COLLECTION_API_SECRET");
+
+        $arg = getenv("COLLECTION_API_SECRET");
+
+        if(isset(self::$collectionApiSecret))
+        {
+            return self::$collectionApiSecret;
+        }
+
+        if($arg)
+        {
+            return $arg;
+        }
+
     }
 
 
@@ -173,7 +222,17 @@ class MomoApi
      */
     public static function getCollectionPrimaryKey()
     {
-        return self::$collectionPrimaryKey || getenv("COLLECTION_PRIMARY_KEY");
+        $arg = getenv("COLLECTION_PRIMARY_KEY");
+
+        if(isset(self::$collectionPrimaryKey))
+        {
+            return self::$collectionPrimaryKey;
+        }
+
+        if($arg)
+        {
+            return $arg;
+        }
     }
 
 
@@ -195,7 +254,18 @@ class MomoApi
      */
     public static function getCollectionUserId()
     {
-        return self::$collectionUserId || getenv("COLLECTION_USER_ID");
+
+        $arg = getenv("COLLECTION_USER_ID");;
+
+        if(isset(self::$collectionUserId ))
+        {
+            return self::$collectionUserId ;
+        }
+
+        if($arg)
+        {
+            return $arg;
+        }
     }
 
 
@@ -217,7 +287,18 @@ class MomoApi
      */
     public static function getRemittanceApiSecret()
     {
-        return self::$remittanceApiSecret  || getenv("REMITTANCE_API_SECRET");
+
+        $arg = getenv("REMITTANCE_API_SECRET");
+
+        if(isset(self::$remittanceApiSecret ))
+        {
+            return self::$remittanceApiSecret;
+        }
+
+        if($arg)
+        {
+            return $arg;
+        }
     }
 
 
@@ -237,7 +318,17 @@ class MomoApi
      */
     public static function getRemittancePrimaryKey()
     {
-        return self::$remittancePrimaryKey || getenv("REMITTANCE_PRIMARY_KEY");
+        $arg = getenv("REMITTANCE_PRIMARY_KEY");
+
+        if(isset(self::$remittancePrimaryKey ))
+        {
+            return self::$remittancePrimaryKey;
+        }
+
+        if($arg)
+        {
+            return $arg;
+        }
     }
 
 
@@ -257,7 +348,18 @@ class MomoApi
      */
     public static function getRemittanceUserId ()
     {
-        return self::$remittanceUserId || getenv("REMITTANCE_USER_ID") ;
+
+        $arg = getenv("REMITTANCE_USER_ID");
+
+        if(isset(self::$remittanceUserId ))
+        {
+            return self::$remittanceUserId;
+        }
+
+        if($arg)
+        {
+            return $arg;
+        }
     }
 
 
@@ -277,7 +379,17 @@ class MomoApi
      */
     public static function getDisbursementApiSecret()
     {
-        return self::$disbursementApiSecret || getenv("DISBURSEMENT_API_SECRET");
+        $arg = getenv("DISBURSEMENT_API_SECRET");
+
+        if(isset(self::$disbursementApiSecret ))
+        {
+            return self::$disbursementApiSecret;
+        }
+
+        if($arg)
+        {
+            return $arg;
+        }
     }
 
 
@@ -297,7 +409,18 @@ class MomoApi
      */
     public static function getDisbursementPrimaryKey()
     {
-        return self::$disbursementPrimaryKey || getenv("DISBURSEMENT_PRIMARY_KEY");
+
+        $arg = getenv("DISBURSEMENT_PRIMARY_KEY");
+
+        if(isset(self::$disbursementPrimaryKey ))
+        {
+            return self::$disbursementPrimaryKey;
+        }
+
+        if($arg)
+        {
+            return $arg;
+        }
     }
 
 
@@ -318,7 +441,18 @@ class MomoApi
      */
     public static function getDisbursementUserId ()
     {
-        return self::$disbursementUserId || getenv("DISBURSEMENT_USER_ID");
+
+        $arg = getenv("DISBURSEMENT_USER_ID");
+
+        if(isset(self::$disbursementUserId))
+        {
+            return self::$disbursementUserId;
+        }
+
+        if($arg)
+        {
+            return $arg;
+        }
     }
 
 

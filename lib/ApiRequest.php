@@ -9,15 +9,53 @@ namespace MomoApi;
  */
 class ApiRequest
 {
-    /**
-     * @var string|null
-     */
-    private $_apiKey;
 
-    /**
-     * @var string
-     */
-    private $_apiBase;
+    public  $_baseUrl;
+
+
+    //@var string target environment
+    public  $_targetEnvironment;
+
+
+    // @var string the currency of http calls
+    public  $_currency;
+
+
+
+    // @var string The MomoApi Collections API Secret.
+    public  $_collectionApiSecret;
+
+    // @var string The MomoApi collections primary Key
+    public  $_collectionPrimaryKey;
+
+    // @var string The MomoApi collections User Id
+    public  $_collectionUserId ;
+
+
+
+
+    // @var string The MomoApi remittance API Secret.
+    public $_remittanceApiSecret;
+
+    // @var string The MomoApi remittance primary Key
+    public  $_remittancePrimaryKey;
+
+    // @var string The MomoApi remittance User Id
+    public  $_remittanceUserId ;
+
+
+
+
+    // @var string The MomoApi disbursements API Secret.
+    public  $_disbursementApiSecret;
+
+    // @var string The MomoApi disbursements primary Key
+    public  $_disbursementPrimaryKey;
+
+    // @var string The MomoApi disbursements User Id
+    public  $_disbursementUserId;
+
+
 
     /**
      * @var HttpClient\ClientInterface
@@ -32,13 +70,13 @@ class ApiRequest
      * @param string|null $apiKey
      * @param string|null $apiBase
      */
-    public function __construct($apiKey = null, $apiBase = null)
+    public function __construct($currency=null)
     {
-        $this->_apiKey = $apiKey;
-        if (!$apiBase) {
-            $apiBase = MomoApi::$apiBase;
+
+        if (!$currency) {
+            $$currency = MomoApi::getCurrency();
         }
-        $this->_apiBase = $apiBase;
+        $this->_currency = $currency;
     }
 
 
@@ -109,11 +147,27 @@ class ApiRequest
     {
         $params = $params ?: [];
         $headers = $headers ?: [];
-        list($rbody, $rcode, $rheaders, $myApiKey) =
-            $this->_requestRaw($method, $url, $params, $headers);
+
+
+        $rawHeaders = [];
+
+        foreach ($headers as $header => $value) {
+            $rawHeaders[] = $header . ': ' . $value;
+        }
+
+
+        list($rbody, $rcode, $rheaders) = $this->httpClient()->request(
+            $method,
+            $url,
+            $rawHeaders,
+            $params
+        );
+
+
+
         $json = $this->_interpretResponse($rbody, $rcode, $rheaders);
         $resp = new ApiResponse($rbody, $rcode, $rheaders, $json);
-        return [$resp, $myApiKey];
+        return $resp;
     }
 
     /**
@@ -148,7 +202,7 @@ class ApiRequest
         if (!is_array($resp) || !isset($resp['error'])) {
             $msg = "Invalid response object from API: $rbody "
                 . "(HTTP response code was $rcode)";
-            throw new Error\Api($msg, $rcode, $rbody, $resp, $rheaders);
+            throw new Error\MomoApiError($msg, $rcode, $rbody, $resp, $rheaders);
         }
 
         $errorData = $resp['error'];
@@ -205,7 +259,7 @@ class ApiRequest
             case 429:
                 return new Error\RateLimit($msg, $param, $rcode, $rbody, $resp, $rheaders);
             default:
-                return new Error\Api($msg, $rcode, $rbody, $resp, $rheaders);
+                return new Error\MomoApiError($msg, $rcode, $rbody, $resp, $rheaders);
         }
     }
 
@@ -265,128 +319,8 @@ class ApiRequest
         }
     }
 
-    /**
-     * @static
-     *
-     * @param string $apiKey
-     * @param null   $clientInfo
-     *
-     * @return array
-     */
-    private static function _defaultHeaders($apiKey, $clientInfo = null)
-    {
-        $uaString = 'MomoApi/v1 PhpBindings/' . MomoApi::VERSION;
 
-        $langVersion = phpversion();
-        $uname = php_uname();
 
-        $appInfo = MomoApi::getAppInfo();
-
-        if ($appInfo !== null) {
-            $uaString .= ' ' . self::_formatAppInfo($appInfo);
-            $ua['application'] = $appInfo;
-        }
-
-        $defaultHeaders = [
-            'X-MomoApi-Client-User-Agent' => json_encode($ua),
-            'User-Agent' => $uaString,
-            'Authorization' => 'Bearer ' . $apiKey,
-        ];
-        return $defaultHeaders;
-    }
-
-    /**
-     * @param string $method
-     * @param string $url
-     * @param array  $params
-     * @param array  $headers
-     *
-     * @return array
-     * @throws Error\Api
-     * @throws Error\ApiConnection
-     * @throws Error\Authentication
-     */
-    private function _requestRaw($method, $url, $params, $headers)
-    {
-        $myApiKey = $this->_apiKey;
-        if (!$myApiKey) {
-            $myApiKey = MomoApi::$apiKey;
-        }
-
-        if (!$myApiKey) {
-            $msg = 'No API key provided.  (HINT: set your API key using '
-                . '"MomoApi::setApiKey(<API-KEY>)".  You can generate API keys from '
-                . 'the MomoApi web interface.  See https://stripe.com/api for '
-                . 'details, or email support@stripe.com if you have any questions.';
-            throw new Error\Authentication($msg);
-        }
-
-        // Clients can supply arbitrary additional keys to be included in the
-        // X-MomoApi-Client-User-Agent header via the optional getUserAgentInfo()
-        // method
-        $clientUAInfo = null;
-        if (method_exists($this->httpClient(), 'getUserAgentInfo')) {
-            $clientUAInfo = $this->httpClient()->getUserAgentInfo();
-        }
-
-        $absUrl = $this->_apiBase.$url;
-        $params = self::_encodeObjects($params);
-        $defaultHeaders = $this->_defaultHeaders($myApiKey, $clientUAInfo);
-        if (MomoApi::$apiVersion) {
-            $defaultHeaders['MomoApi-Version'] = MomoApi::$apiVersion;
-        }
-
-        if (MomoApi::$accountId) {
-            $defaultHeaders['MomoApi-Account'] = MomoApi::$accountId;
-        }
-
-        if (MomoApi::$enableTelemetry && self::$requestTelemetry != null) {
-            $defaultHeaders["X-MomoApi-Client-Telemetry"] = self::_telemetryJson(self::$requestTelemetry);
-        }
-
-        $hasFile = false;
-        $hasCurlFile = class_exists('\CURLFile', false);
-        foreach ($params as $k => $v) {
-            if (is_resource($v)) {
-                $hasFile = true;
-                $params[$k] = self::_processResourceParam($v, $hasCurlFile);
-            } elseif ($hasCurlFile && $v instanceof \CURLFile) {
-                $hasFile = true;
-            }
-        }
-
-        if ($hasFile) {
-            $defaultHeaders['Content-Type'] = 'multipart/form-data';
-        } else {
-            $defaultHeaders['Content-Type'] = 'application/x-www-form-urlencoded';
-        }
-
-        $combinedHeaders = array_merge($defaultHeaders, $headers);
-        $rawHeaders = [];
-
-        foreach ($combinedHeaders as $header => $value) {
-            $rawHeaders[] = $header . ': ' . $value;
-        }
-
-        $requestStartMs = Util\Util::currentTimeMillis();
-
-        list($rbody, $rcode, $rheaders) = $this->httpClient()->request(
-            $method,
-            $absUrl,
-            $rawHeaders,
-            $params,
-            $hasFile
-        );
-
-        if (array_key_exists('request-id', $rheaders)) {
-            self::$requestTelemetry = new RequestTelemetry(
-                $rheaders['request-id'],
-                Util\Util::currentTimeMillis() - $requestStartMs
-            );
-        }
-
-        return [$rbody, $rcode, $rheaders, $myApiKey];
-    }
 
 
 
@@ -417,7 +351,7 @@ class ApiRequest
         if ($resp === null && $jsonError !== JSON_ERROR_NONE) {
             $msg = "Invalid response body from API: $rbody "
                 . "(HTTP response code was $rcode, json_last_error() was $jsonError)";
-            throw new Error\Api($msg, $rcode, $rbody);
+            throw new Error\MomoApiError($msg, $rcode, $rbody);
         }
 
         if ($rcode < 200 || $rcode >= 300) {

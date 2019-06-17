@@ -113,7 +113,7 @@ class CurlClientTest extends TestCase
         $withBadClosure = new CurlClient(function () {
             return 'thisShouldNotWork';
         });
-        $this->setExpectedException('MomoApi\Error\Api', "Non-array value returned by defaultOptions CurlClient callback");
+        $this->setExpectedException('MomoApi\Error\MomoApiError', "Non-array value returned by defaultOptions CurlClient callback");
         $withBadClosure->request('get', 'https://httpbin.org/status/200', [], [], false);
     }
 
@@ -161,14 +161,7 @@ class CurlClientTest extends TestCase
         $this->assertFalse($this->shouldRetryMethod->invoke($curlClient, 0, 0, MomoApi::getMaxNetworkRetries()));
     }
 
-    public function testShouldNotRetryOnCertValidationError()
-    {
-        MomoApi::setMaxNetworkRetries(2);
 
-        $curlClient = new CurlClient();
-
-        $this->assertFalse($this->shouldRetryMethod->invoke($curlClient, CURLE_SSL_PEER_CERTIFICATE, -1, 0));
-    }
 
     public function testSleepTimeShouldGrowExponentially()
     {

@@ -7,39 +7,90 @@ namespace MomoApi;
  */
 class TestCase extends \PHPUnit_Framework_TestCase
 {
-    /** @var string original API base URL */
-    protected $origApiBase;
+    public  $_baseUrl;
 
-    /** @var string original API key */
-    protected $origApiKey;
 
-    /** @var string original client ID */
-    protected $origClientId;
+    //@var string target environment
+    public  $_targetEnvironment;
 
-    /** @var string original API version */
-    protected $origApiVersion;
 
-    /** @var string original account ID */
-    protected $origAccountId;
+    // @var string the currency of http calls
+    public  $_currency;
 
-    /** @var object HTTP client mocker */
-    protected $clientMock;
+
+
+    // @var string The MomoApi Collections API Secret.
+    public  $_collectionApiSecret;
+
+    // @var string The MomoApi collections primary Key
+    public  $_collectionPrimaryKey;
+
+    // @var string The MomoApi collections User Id
+    public  $_collectionUserId ;
+
+
+
+
+    // @var string The MomoApi remittance API Secret.
+    public $_remittanceApiSecret;
+
+    // @var string The MomoApi remittance primary Key
+    public  $_remittancePrimaryKey;
+
+    // @var string The MomoApi remittance User Id
+    public  $_remittanceUserId ;
+
+
+
+
+    // @var string The MomoApi disbursements API Secret.
+    public  $_disbursementApiSecret;
+
+    // @var string The MomoApi disbursements primary Key
+    public  $_disbursementPrimaryKey;
+
+    // @var string The MomoApi disbursements User Id
+    public  $_disbursementUserId;
+
+
+
+
 
     protected function setUp()
     {
         // Save original values so that we can restore them after running tests
-        $this->origApiBase = MomoApi::$apiBase;
-        $this->origApiKey = MomoApi::getApiKey();
-        $this->origClientId = MomoApi::getClientId();
-        $this->origApiVersion = MomoApi::getApiVersion();
-        $this->origAccountId = MomoApi::getAccountId();
+        $this->_baseUrl = MomoApi::getBaseUrl();
 
-        // Set up host and credentials for MomoApi-mock
-        MomoApi::$apiBase = "localhost";
-        MomoApi::setApiKey("sk_test_123");
-        MomoApi::setClientId("ca_123");
-        MomoApi::setApiVersion(null);
-        MomoApi::setAccountId(null);
+        $this-> _targetEnvironment = MomoApi::getTargetEnvironment();
+
+
+        $this->_currency = MomoApi::getCurrency();
+
+
+        $this->_collectionApiSecret = MomoApi::getCollectionApiSecret();
+
+        $this->_collectionPrimaryKey = MomoApi::getCollectionPrimaryKey();
+
+        $this->_collectionUserId  = MomoApi::getCollectionUserId();
+
+        $this->_remittanceApiSecret = MomoApi::getRemittanceApiSecret();
+
+        $this->_remittancePrimaryKey = MomoApi::getRemittancePrimaryKey();
+        $this->_remittanceUserId = MomoApi::getRemittanceUserId();
+
+        $this->_disbursementApiSecret = MomoApi::getDisbursementApiSecret();
+
+        $this->_disbursementPrimaryKey = MomoApi::getDisbursementPrimaryKey();
+
+        $this->_disbursementUserId = MomoApi::getDisbursementUserId();
+
+
+
+
+
+
+
+
 
         // Set up the HTTP client mocker
         $this->clientMock = $this->getMock('\MomoApi\HttpClient\ClientInterface');
@@ -51,12 +102,32 @@ class TestCase extends \PHPUnit_Framework_TestCase
     protected function tearDown()
     {
         // Restore original values
-        MomoApi::$apiBase = $this->origApiBase;
-        MomoApi::setEnableTelemetry(false);
-        MomoApi::setApiKey($this->origApiKey);
-        MomoApi::setClientId($this->origClientId);
-        MomoApi::setApiVersion($this->origApiVersion);
-        MomoApi::setAccountId($this->origAccountId);
+
+
+         MomoApi::setBaseUrl($this->_baseUrl);
+
+         MomoApi::setTargetEnvironment($this-> _targetEnvironment);
+
+
+         MomoApi::setCurrency($this->_currency);
+
+
+        MomoApi::setCollectionApiSecret( $this->_collectionApiSecret);
+
+         MomoApi::setCollectionPrimaryKey($this->_collectionPrimaryKey);
+
+        MomoApi::setCollectionUserId( $this->_collectionUserId );
+
+        MomoApi::setRemittanceApiSecret( $this->_remittanceApiSecret);
+
+         MomoApi::setRemittancePrimaryKey($this->_remittancePrimaryKey);
+        MomoApi::setRemittanceUserId($this->_remittanceUserId );
+
+         MomoApi::setDisbursementApiSecret($this->_disbursementApiSecret);
+
+         MomoApi::setDisbursementPrimaryKey($this->_disbursementPrimaryKey);
+
+         MomoApi::setDisbursementUserId($this->_disbursementUserId);
     }
 
     /**
