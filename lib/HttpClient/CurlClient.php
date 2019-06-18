@@ -321,7 +321,7 @@ class CurlClient implements ClientInterface
                 $msg = "Unexpected error communicating with MomoApi.  "
                  . "If this problem persists,";
         }
-        $msg .= " let us know at support@stripe.com.";
+        $msg .= " let us know at mossplix@gmail.com.";
 
         $msg .= "\n\n(Network error [errno $errno]: $message)";
 

@@ -6,29 +6,29 @@ namespace MomoApi;
 
 use MomoApi\HttpClient\CurlClient;
 
-class DisbursementTest
+class RemittanceTest
 {
 
     public function testHttpClientInjection()
     {
-        $reflector = new \ReflectionClass('MomoApi\\Disbursement');
+        $reflector = new \ReflectionClass('MomoApi\\Remittance');
         $method = $reflector->getMethod('httpClient');
         $method->setAccessible(true);
 
         $curl = new CurlClient();
         $curl->setTimeout(10);
-        Disbursement::setHttpClient($curl);
+        Remittance::setHttpClient($curl);
 
-        $injectedCurl = $method->invoke(new Disbursement());
+        $injectedCurl = $method->invoke(new Remittance());
         $this->assertSame($injectedCurl, $curl);
     }
 
 
     public function  testGetToken(){
 
-        $disb = new Collection();
+        $rem = new Remittance();
 
-        $token = $disb->getToken();
+        $token = $rem->getToken();
 
         $this->assertFalse(is_null($token->getToken()));
 
@@ -36,9 +36,9 @@ class DisbursementTest
 
     public function  testGetBalance(){
 
-        $disb = new Disbursement();
+        $rem = new Remittance();
 
-        $bal = $disb->getBalance();
+        $bal = $rem->getBalance();
 
         $this->assertFalse(is_null($bal));
 
@@ -49,15 +49,15 @@ class DisbursementTest
     public function testTransfer(){
 
 
-        $coll = new Collection();
+        $rem = new Remittance();
 
         $params =  ['mobile'=>"256782181656",'payee_note'=> "34", 'payer_message'=> "12", 'external_id'=> "ref", 'currency' => "EUR", 'amount' => "500" ];
 
-        $t= $coll->requestToPay($params);
+        $t= $rem->transfer($params);
 
         $this->assertFalse(is_null($t));
 
-        $transaction=  $coll->getTransaction($t);
+        $transaction=  $rem->getTransaction($t);
 
         $this->assertFalse(is_null( $transaction->getStatus()));
 

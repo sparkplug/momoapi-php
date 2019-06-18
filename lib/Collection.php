@@ -23,15 +23,11 @@ class Collection extends ApiRequest
 
     public  $_baseUrl;
 
-
     //@var string target environment
     public  $_targetEnvironment;
 
-
     // @var string the currency of http calls
     public  $_currency;
-
-
 
     // @var string The MomoApi Collections API Secret.
     public  $_collectionApiSecret;
@@ -41,9 +37,6 @@ class Collection extends ApiRequest
 
     // @var string The MomoApi collections User Id
     public  $_collectionUserId ;
-
-
-
 
 
 
@@ -176,9 +169,6 @@ class Collection extends ApiRequest
 
 
 
-        $obj = ResourceFactory::balanceFromJson($response->json);
-
-        return $obj;
 
     }
 
@@ -261,6 +251,28 @@ class Collection extends ApiRequest
     }
 
 
+    public function isActive($mobile,$params=[])
+    {
+
+        $token = $this->getToken()->getToken();
+
+
+        $headers = [
+            'Authorization' => 'Bearer ' . $token,
+            'Content-Type' => 'application/json',
+            "X-Target-Environment" => $this->_targetEnvironment,
+            'Ocp-Apim-Subscription-Key' => MomoApi::getCollectionPrimaryKey()
+        ];
+
+        $url =  $this->_baseUrl . "/collection/v1_0/accountholder/MSISDN/".$mobile ."/active";
+
+        $response = self::request('get', $url, $params, $headers);
+
+        return $response;
+
+    }
+
+
     /**
      * @param array|null|mixed $params The list of parameters to validate
      *
@@ -276,32 +288,6 @@ class Collection extends ApiRequest
             throw new \MomoApi\Error\MomoApiError($message);
         }
     }
-
-
-    /**
-     * @static
-     *
-     * @param HttpClient\ClientInterface $client
-     */
-    public static function setHttpClient($client)
-    {
-        self::$_httpClient = $client;
-    }
-
-
-
-
-    /**
-     * @return HttpClient\ClientInterface
-     */
-    private function httpClient()
-    {
-        if (!self::$_httpClient) {
-            self::$_httpClient = HttpClient\CurlClient::instance();
-        }
-        return self::$_httpClient;
-    }
-
 
 
 
