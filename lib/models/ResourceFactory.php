@@ -48,7 +48,7 @@ class ResourceFactory
 
     static public function requestToPayFromJson($jsonData)
     {
-        $requestToPay = new \MomoApi\models\RequestToPay($jsonData['payer'],$jsonData['payeeNote'],$jsonData['payerMessage'], $jsonData['externalId'],$jsonData['currency'],$jsonData['amount']);
+        $requestToPay = new \MomoApi\models\RequestToPay($jsonData['payer'],$jsonData['payeeNote'],$jsonData['payerMessage'], $jsonData['externalId'],$jsonData['currency'],$jsonData['amount'],$jsonData['status'],$jsonData['financialTransactionId']);
 
         return $requestToPay;
     }

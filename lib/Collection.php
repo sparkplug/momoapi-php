@@ -189,8 +189,25 @@ class Collection extends ApiRequest
      *
      * @return Transaction The transaction.
      */
-    public function getTransaction($params = null, $options = null)
+    public function getTransaction($trasaction_id,$params=null)
     {
+        $url =  $this->_baseUrl ."/collection/v1_0/requesttopay/". $trasaction_id;
+
+        $token = $this->getToken()->getToken();
+
+        $headers = [
+            'Authorization' => 'Bearer ' . $token,
+            'Content-Type' => 'application/json',
+            "X-Target-Environment" => $this->_targetEnvironment,
+            'Ocp-Apim-Subscription-Key' => MomoApi::getCollectionPrimaryKey(),
+        ];
+
+        $response = self::request('get', $url, $params, $headers);
+
+        $obj = ResourceFactory::requestToPayFromJson($response->json);
+
+        return $obj;
+
 
     }
 
@@ -201,23 +218,45 @@ class Collection extends ApiRequest
      *
      * @return Charge The refunded charge.
      */
-    public function requestToPay($params = null, $options = null)
+    public function requestToPay($params, $options = null)
     {
 
 
 
         self::_validateParams($params);
-        $url = "/collection/v1_0/requesttopay";
+        $url =  $this->_baseUrl . "/collection/v1_0/requesttopay";
 
-        $headers=[];
+        $token = $this->getToken()->getToken();
+
+        $transaction =  Util\Util::uuid();
+
+        $headers = [
+            'Authorization' => 'Bearer ' . $token,
+            'Content-Type' => 'application/json',
+            "X-Target-Environment" => $this->_targetEnvironment,
+            'Ocp-Apim-Subscription-Key' => MomoApi::getCollectionPrimaryKey(),
+            "X-Reference-Id" =>  $transaction
+        ];
 
 
-        $response = self::request('post', $url, $params, $headers);
+
+        $data = [
+        "payer" =>  [
+            "partyIdType" => "MSISDN",
+                "partyId" => $params['mobile']],
+            "payeeNote" => $params['payee_note'],
+            "payerMessage" =>  $params['payer_message'],
+            "externalId" => $params['external_id'],
+            "currency" =>  $params['currency'],
+            "amount" => $params['amount']];
 
 
-        $obj = \Stripe\Util\Util::convertToStripeObject($response->json, $options);
 
-        return $obj;
+        $response = self::request('post', $url, $data, $headers);
+
+
+
+        return  $transaction;
 
     }
 

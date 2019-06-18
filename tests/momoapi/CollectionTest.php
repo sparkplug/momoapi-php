@@ -21,13 +21,7 @@ class CollectionTest extends TestCase
         $this->assertSame($injectedCurl, $curl);
     }
 
-    public function testDefaultHeaders()
-    {
-        $reflector = new \ReflectionClass('MomoApi\\Collection');
-        $method = $reflector->getMethod('_defaultHeaders');
-        $method->setAccessible(true);
 
-    }
 
     public function  testGetToken(){
 
@@ -35,7 +29,7 @@ class CollectionTest extends TestCase
 
         $token = $coll->getToken();
 
-        $this->assertSame($token->getToken(), "");
+        $this->assertFalse(is_null($token->getToken()));
 
     }
 
@@ -45,11 +39,29 @@ class CollectionTest extends TestCase
 
         $bal = $coll->getBalance();
 
-        $this->assertSame($bal, "");
+        $this->assertFalse(is_null($bal));
 
     }
 
 
+
+    public function testRequestToPay(){
+
+
+        $coll = new Collection();
+
+        $params =  ['mobile'=>"256782181656",'payee_note'=> "34", 'payer_message'=> "12", 'external_id'=> "ref", 'currency' => "EUR", 'amount' => "500" ];
+
+        $t= $coll->requestToPay($params);
+
+        $this->assertFalse(is_null($t));
+
+        $transaction=  $coll->getTransaction($t);
+
+        $this->assertFalse(is_null( $transaction->getStatus()));
+
+
+    }
 
 
 }

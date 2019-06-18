@@ -186,12 +186,12 @@ class CurlClient implements ClientInterface
                 $absUrl = "$absUrl?$encoded";
             }
         } elseif ($method == 'post') {
-            $opts[CURLOPT_POST] = 1;
-            $opts[CURLOPT_POSTFIELDS] =  Util\Util::encodeParameters($params);
+            $opts[CURLOPT_POST] = true;
+            $opts[CURLOPT_POSTFIELDS] =  json_encode($params);
         } elseif ($method == 'delete') {
             $opts[CURLOPT_CUSTOMREQUEST] = 'DELETE';
             if (count($params) > 0) {
-                $encoded = Util\Util::encodeParameters($params);
+                $encoded = json_encode($params);
                 $absUrl = "$absUrl?$encoded";
             }
         } else {

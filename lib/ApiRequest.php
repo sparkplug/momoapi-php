@@ -263,38 +263,7 @@ class ApiRequest
         }
     }
 
-    /**
-     * @static
-     *
-     * @param string|bool $rbody
-     * @param int         $rcode
-     * @param array       $rheaders
-     * @param array       $resp
-     * @param string      $errorCode
-     *
-     * @return null|Error\OAuth\InvalidClient|Error\OAuth\InvalidGrant|Error\OAuth\InvalidRequest|Error\OAuth\InvalidScope|Error\OAuth\UnsupportedGrantType|Error\OAuth\UnsupportedResponseType
-     */
-    private static function _specificOAuthError($rbody, $rcode, $rheaders, $resp, $errorCode)
-    {
-        $description = isset($resp['error_description']) ? $resp['error_description'] : $errorCode;
 
-        switch ($errorCode) {
-            case 'invalid_client':
-                return new Error\OAuth\InvalidClient($errorCode, $description, $rcode, $rbody, $resp, $rheaders);
-            case 'invalid_grant':
-                return new Error\OAuth\InvalidGrant($errorCode, $description, $rcode, $rbody, $resp, $rheaders);
-            case 'invalid_request':
-                return new Error\OAuth\InvalidRequest($errorCode, $description, $rcode, $rbody, $resp, $rheaders);
-            case 'invalid_scope':
-                return new Error\OAuth\InvalidScope($errorCode, $description, $rcode, $rbody, $resp, $rheaders);
-            case 'unsupported_grant_type':
-                return new Error\OAuth\UnsupportedGrantType($errorCode, $description, $rcode, $rbody, $resp, $rheaders);
-            case 'unsupported_response_type':
-                return new Error\OAuth\UnsupportedResponseType($errorCode, $description, $rcode, $rbody, $resp, $rheaders);
-        }
-
-        return null;
-    }
 
     /**
      * @static
@@ -347,6 +316,10 @@ class ApiRequest
     private function _interpretResponse($rbody, $rcode, $rheaders)
     {
         $resp = json_decode($rbody, true);
+        echo json_encode($resp);
+        if($rcode == 202){
+            return  $resp;
+        }
         $jsonError = json_last_error();
         if ($resp === null && $jsonError !== JSON_ERROR_NONE) {
             $msg = "Invalid response body from API: $rbody "
