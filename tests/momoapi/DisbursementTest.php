@@ -1,13 +1,11 @@
 <?php
 
-
 namespace MomoApi;
 
 use MomoApi\HttpClient\CurlClient;
 
 class DisbursementTest
 {
-
     public function testHttpClientInjection()
     {
         $reflector = new \ReflectionClass('MomoApi\\Disbursement');
@@ -25,31 +23,25 @@ class DisbursementTest
 
     public function testGetToken()
     {
-
         $disb = new Collection();
 
         $token = $disb->getToken();
 
         $this->assertFalse(is_null($token->getToken()));
-
     }
 
     public function testGetBalance()
     {
-
         $disb = new Disbursement();
 
         $bal = $disb->getBalance();
 
         $this->assertFalse(is_null($bal));
-
     }
 
 
     public function testTransfer()
     {
-
-
         $coll = new Collection();
 
         $params = ['mobile' => "256782181656", 'payee_note' => "34", 'payer_message' => "12", 'external_id' => "ref", 'currency' => "EUR", 'amount' => "500"];
@@ -61,8 +53,5 @@ class DisbursementTest
         $transaction = $coll->getTransaction($t);
 
         $this->assertFalse(is_null($transaction->getStatus()));
-
-
     }
-
 }

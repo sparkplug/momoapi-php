@@ -48,7 +48,8 @@ class Util
                     "It looks like the mbstring extension is not enabled. " .
                     "UTF-8 strings will not properly be encoded. Ask your system " .
                     "administrator to enable the mbstring extension, or write to " .
-                    "mossplix@gmail.com if you have any questions.", E_USER_WARNING
+                    "mossplix@gmail.com if you have any questions.",
+                    E_USER_WARNING
                 );
             }
         }
@@ -235,11 +236,14 @@ class Util
     {
         return sprintf(
             '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-            mt_rand(0, 0xffff), mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
             mt_rand(0, 0xffff),
             mt_rand(0, 0x0fff) | 0x4000,
             mt_rand(0, 0x3fff) | 0x8000,
-            mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff)
         );
     }
 }

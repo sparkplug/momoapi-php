@@ -6,7 +6,7 @@ require_once "Collection.php";
 
 class Test
 {
-    function getToken()
+    public function getToken()
     {
         $coll = Collection::getToken();
         echo $coll;
@@ -15,12 +15,6 @@ class Test
 
 
 if (!debug_backtrace()) {
-
     $obj = new Test();
     $obj->getToken();
 }
-
-
-
-
-

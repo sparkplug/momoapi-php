@@ -24,13 +24,11 @@ class CollectionTest extends TestCase
 
     public function testGetToken()
     {
-
         $coll = new Collection();
 
         $token = $coll->getToken();
 
         $this->assertFalse(is_null($token->getToken()));
-
     }
 
     public function testGetBalance()
@@ -41,14 +39,11 @@ class CollectionTest extends TestCase
         $bal = $coll->getBalance();
 
         $this->assertFalse(is_null($bal));
-
     }
 
 
     public function testRequestToPay()
     {
-
-
         $coll = new Collection();
 
         $params = ['mobile' => "256782181656", 'payee_note' => "34", 'payer_message' => "12", 'external_id' => "ref", 'currency' => "EUR", 'amount' => "500"];
@@ -60,9 +55,5 @@ class CollectionTest extends TestCase
         $transaction = $coll->getTransaction($t);
 
         $this->assertFalse(is_null($transaction->getStatus()));
-
-
     }
-
-
 }

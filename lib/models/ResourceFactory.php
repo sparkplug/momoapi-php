@@ -1,6 +1,7 @@
 <?php
 
 namespace MomoApi\models;
+
 class ResourceFactory
 {
     public static function accessTokenFromJson($jsonData)

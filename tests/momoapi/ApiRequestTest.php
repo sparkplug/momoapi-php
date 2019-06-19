@@ -19,6 +19,4 @@ class ApiRequestTest extends TestCase
         $injectedCurl = $method->invoke(new ApiRequest());
         $this->assertSame($injectedCurl, $curl);
     }
-
-
 }

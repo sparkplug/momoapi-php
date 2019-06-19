@@ -223,6 +223,4 @@ class CurlClientTest extends TestCase
         $this->assertEquals($baseValue * 4, $this->sleepTimeMethod->invoke($curlClient, 3));
         $this->assertEquals($baseValue * 8, $this->sleepTimeMethod->invoke($curlClient, 4));
     }
-
-
 }

@@ -6,16 +6,13 @@ require_once "Util/Util.php";
 
 class Provision
 {
-    function getCredentials()
+    public function getCredentials()
     {
-
         echo 'providerCallbackHost:';
         $host = fgets(STDIN);
 
-
         echo 'Ocp-Apim-Subscription-Key: ';
         $apiKey = fgets(STDIN);
-
 
         $data = json_encode(array("providerCallbackHost" => trim($host)));
 
@@ -42,7 +39,8 @@ class Provision
         //curl_setopt($ch, CURLINFO_HEADER_OUT, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
         curl_setopt(
-            $ch, CURLOPT_HTTPHEADER,
+            $ch,
+            CURLOPT_HTTPHEADER,
             array('Content-Type: application/json',
                 'X-Reference-Id: ' . $token,
                 'Accept: application/json',
@@ -56,7 +54,8 @@ class Provision
             curl_setopt($ch, CURLOPT_URL, $userUrl);
 
             curl_setopt(
-                $ch, CURLOPT_HTTPHEADER,
+                $ch,
+                CURLOPT_HTTPHEADER,
                 array('Content-Type: application/json',
                     'Accept: application/json',
                     'Ocp-Apim-Subscription-Key: ' . trim($apiKey)
@@ -74,18 +73,10 @@ class Provision
 
 
             echo "Here is your User Id and API secret : {UserId:" . $token . " , APISecret: " . $res["apiKey"] . " }";
-
-
         }
-
     }
 }
-
 if (!debug_backtrace()) {
-
     $obj = new Provision();
     $obj->getCredentials()();
 }
-
-
-

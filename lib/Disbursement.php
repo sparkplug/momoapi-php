@@ -8,7 +8,6 @@ use MomoApi\Util\Util;
 
 class Disbursement extends ApiRequest
 {
-
     public $headers;
 
 
@@ -50,7 +49,6 @@ class Disbursement extends ApiRequest
      */
     public function __construct($currency = null, $baseUrl = null, $targetEnvironment = null, $disbursementApiSecret = null, $disbursementPrimaryKey = null, $disbursementUserId = null)
     {
-
         if (!$currency) {
             $currency = MomoApi::getCurrency();
         }
@@ -96,8 +94,6 @@ class Disbursement extends ApiRequest
      */
     public function getToken($params = null, $options = null)
     {
-
-
         $url = $this->_baseUrl . '/disbursement/token/';
 
 
@@ -117,8 +113,6 @@ class Disbursement extends ApiRequest
         $obj = ResourceFactory::accessTokenFromJson($response->json);
 
         return $obj;
-
-
     }
 
 
@@ -130,7 +124,6 @@ class Disbursement extends ApiRequest
      */
     public function getBalance($params = null, $options = null)
     {
-
         $url = $this->_baseUrl . "/disbursement/v1_0/account/balance";
 
         $token = $this->getToken()->getToken();
@@ -152,7 +145,6 @@ class Disbursement extends ApiRequest
         $obj = ResourceFactory::balanceFromJson($response->json);
 
         return $obj;
-
     }
 
 
@@ -180,8 +172,6 @@ class Disbursement extends ApiRequest
         $obj = ResourceFactory::transferFromJson($response->json);
 
         return $obj;
-
-
     }
 
 
@@ -224,13 +214,11 @@ class Disbursement extends ApiRequest
 
 
         return $transaction;
-
     }
 
 
     public function isActive($mobile, $params = null)
     {
-
         $token = $this->getToken()->getToken();
 
 
@@ -248,8 +236,6 @@ class Disbursement extends ApiRequest
         $response = self::request('get', $url, $params, $headers);
 
         return $response;
-
-
     }
 
 

@@ -1,6 +1,7 @@
 <?php
 
 namespace MomoApi\models;
+
 class Transaction implements \JsonSerializable
 {
 

@@ -1,9 +1,9 @@
 <?php
 
 namespace MomoApi\models;
+
 class RequestToPay implements \JsonSerializable
 {
-
     public $payer;
 
     public $payeeNote;

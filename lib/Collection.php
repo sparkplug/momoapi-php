@@ -5,15 +5,11 @@ namespace MomoApi;
 use MomoApi\HttpClient\ClientInterface;
 use MomoApi\models\ResourceFactory;
 
-
 class Collection extends ApiRequest
 {
-
     public $headers;
 
-
     public $authToken;
-
 
     public $_baseUrl;
 

@@ -1,8 +1,6 @@
-
-
+<?php
 
 namespace MomoApi;
-
 
 use MomoApi\HttpClient\ClientInterface;
 use MomoApi\models\ResourceFactory;
@@ -52,7 +50,6 @@ class Remittance extends ApiRequest
      */
     public function __construct($currency = null, $baseUrl = null, $targetEnvironment = null, $remittanceApiSecret = null, $remittancePrimaryKey = null, $remittanceUserId = null)
     {
-
         if (!$currency) {
             $currency = MomoApi::getCurrency();
         }
@@ -98,8 +95,6 @@ class Remittance extends ApiRequest
      */
     public function getToken($params = null, $options = null)
     {
-
-
         $url = $this->_baseUrl . '/remittance/token/';
 
 
@@ -112,15 +107,11 @@ class Remittance extends ApiRequest
             'Ocp-Apim-Subscription-Key' => MomoApi::getRemittancePrimaryKey()
         ];
 
-
         $response = self::request('post', $url, $params, $headers);
-
 
         $obj = ResourceFactory::accessTokenFromJson($response->json);
 
         return $obj;
-
-
     }
 
 
@@ -132,11 +123,9 @@ class Remittance extends ApiRequest
      */
     public function getBalance($params = null, $options = null)
     {
-
         $url = $this->_baseUrl . "/remittance/v1_0/account/balance";
 
         $token = $this->getToken()->getToken();
-
 
         $headers = [
             'Authorization' => 'Bearer ' . $token,
@@ -154,7 +143,6 @@ class Remittance extends ApiRequest
         $obj = ResourceFactory::balanceFromJson($response->json);
 
         return $obj;
-
     }
 
 
@@ -182,8 +170,6 @@ class Remittance extends ApiRequest
         $obj = ResourceFactory::transferFromJson($response->json);
 
         return $obj;
-
-
     }
 
 
@@ -195,8 +181,6 @@ class Remittance extends ApiRequest
      */
     public function transfer($params, $options = null)
     {
-
-
         self::_validateParams($params);
         $url = $this->_baseUrl . "/remittance/v1_0/transfer";
 
@@ -212,7 +196,6 @@ class Remittance extends ApiRequest
             "X-Reference-Id" => $transaction
         ];
 
-
         $data = [
             "payee" => [
                 "partyIdType" => "MSISDN",
@@ -226,9 +209,7 @@ class Remittance extends ApiRequest
 
         $response = self::request('post', $url, $data, $headers);
 
-
         return $transaction;
-
     }
 
 
@@ -252,8 +233,6 @@ class Remittance extends ApiRequest
         $response = self::request('get', $url, $params, $headers);
 
         return $response;
-
-
     }
 
     /**
