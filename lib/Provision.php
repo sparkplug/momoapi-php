@@ -1,14 +1,13 @@
 <?php
+
 namespace MomoApi;
-
-
-use MomoApi\Util\Util;
 
 require_once("Util/Util.php");
 
 class Provision
 {
-    function getCredentials(){
+    function getCredentials()
+    {
 
         echo 'providerCallbackHost:';
         $host = fgets(STDIN);
@@ -18,8 +17,7 @@ class Provision
         $apiKey = fgets(STDIN);
 
 
-
-        $data = json_encode( array("providerCallbackHost" =>  trim($host)));
+        $data = json_encode(array("providerCallbackHost" => trim($host)));
 
         $url = 'https://ericssonbasicapi2.azure-api.net/v1_0/apiuser';
 
@@ -27,7 +25,7 @@ class Provision
         echo $data;
         $ch = curl_init();
 
-        $userUrl = "https://ericssonbasicapi2.azure-api.net/v1_0/apiuser/".$token ."/apikey";
+        $userUrl = "https://ericssonbasicapi2.azure-api.net/v1_0/apiuser/" . $token . "/apikey";
 
 //curl_setopt($ch, CURLOPT_POST, 1);
 //curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "post");
@@ -47,13 +45,13 @@ class Provision
             array('Content-Type: application/json',
                 'X-Reference-Id: ' . $token,
                 'Accept: application/json',
-                'Ocp-Apim-Subscription-Key: '. trim($apiKey)
+                'Ocp-Apim-Subscription-Key: ' . trim($apiKey)
             )
         );
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $result = curl_exec($ch);
 
-        if($result) {
+        if ($result) {
             curl_setopt($ch, CURLOPT_URL, $userUrl);
 
             curl_setopt($ch, CURLOPT_HTTPHEADER,

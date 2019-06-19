@@ -6,7 +6,7 @@ use MomoApi\HttpClient\ClientInterface;
 use MomoApi\models\ResourceFactory;
 use MomoApi\Util\Util;
 
-class Disbursement extends  ApiRequest
+class Disbursement extends ApiRequest
 {
 
     public $headers;
@@ -15,32 +15,25 @@ class Disbursement extends  ApiRequest
     public $authToken;
 
 
-
-    public  $_baseUrl;
+    public $_baseUrl;
 
 
     //@var string target environment
-    public  $_targetEnvironment;
+    public $_targetEnvironment;
 
 
     // @var string the currency of http calls
-    public  $_currency;
-
+    public $_currency;
 
 
     // @var string The MomoApi disbursements API Secret.
-    public  $_disbursementApiSecret;
+    public $_disbursementApiSecret;
 
     // @var string The MomoApi disbursements primary Key
-    public  $_disbursementPrimaryKey;
+    public $_disbursementPrimaryKey;
 
     // @var string The MomoApi disbursements User Id
-    public  $_disbursementUserId ;
-
-
-
-
-
+    public $_disbursementUserId;
 
 
     /**
@@ -49,15 +42,13 @@ class Disbursement extends  ApiRequest
     private static $_httpClient;
 
 
-
-
     /**
      * Disbursement constructor.
      *
      * @param string|null $currency
      * @param string|null $baseUrl
      */
-    public function __construct($currency=null,$baseUrl=null,$targetEnvironment=null, $disbursementApiSecret=null,  $disbursementPrimaryKey=null,$disbursementUserId=null)
+    public function __construct($currency = null, $baseUrl = null, $targetEnvironment = null, $disbursementApiSecret = null, $disbursementPrimaryKey = null, $disbursementUserId = null)
     {
 
         if (!$currency) {
@@ -97,7 +88,6 @@ class Disbursement extends  ApiRequest
     }
 
 
-
     /**
      * @param array|null $params
      * @param array|string|null $options
@@ -124,17 +114,12 @@ class Disbursement extends  ApiRequest
         $response = self::request('post', $url, $params, $headers);
 
 
-
-
         $obj = ResourceFactory::accessTokenFromJson($response->json);
 
         return $obj;
 
 
     }
-
-
-
 
 
     /**
@@ -151,7 +136,6 @@ class Disbursement extends  ApiRequest
         $token = $this->getToken()->getToken();
 
 
-
         $headers = [
             'Authorization' => 'Bearer ' . $token,
             'Content-Type' => 'application/json',
@@ -165,15 +149,11 @@ class Disbursement extends  ApiRequest
         return $response;
 
 
-
-
         $obj = ResourceFactory::balanceFromJson($response->json);
 
         return $obj;
 
     }
-
-
 
 
     /**
@@ -182,9 +162,9 @@ class Disbursement extends  ApiRequest
      *
      * @return Transaction The transaction.
      */
-    public function getTransaction($trasaction_id,$params=null)
+    public function getTransaction($trasaction_id, $params = null)
     {
-        $url =  $this->_baseUrl ."/disbursement/v1_0/transfer/". $trasaction_id;
+        $url = $this->_baseUrl . "/disbursement/v1_0/transfer/" . $trasaction_id;
 
         $token = $this->getToken()->getToken();
 
@@ -205,7 +185,6 @@ class Disbursement extends  ApiRequest
     }
 
 
-
     /**
      * @param array|null $params
      * @param array|string|null $options
@@ -215,44 +194,42 @@ class Disbursement extends  ApiRequest
     public function transfer($params, $options = null)
     {
         self::_validateParams($params);
-        $url =  $this->_baseUrl . "/disbursement/v1_0/transfer";
+        $url = $this->_baseUrl . "/disbursement/v1_0/transfer";
 
         $token = $this->getToken()->getToken();
 
-        $transaction =  Util\Util::uuid();
+        $transaction = Util\Util::uuid();
 
         $headers = [
             'Authorization' => 'Bearer ' . $token,
             'Content-Type' => 'application/json',
             "X-Target-Environment" => $this->_targetEnvironment,
             'Ocp-Apim-Subscription-Key' => MomoApi::getDisbursementPrimaryKey(),
-            "X-Reference-Id" =>  $transaction
+            "X-Reference-Id" => $transaction
         ];
 
 
-
         $data = [
-            "payee" =>  [
+            "payee" => [
                 "partyIdType" => "MSISDN",
                 "partyId" => $params['mobile']],
             "payeeNote" => $params['payee_note'],
-            "payerMessage" =>  $params['payer_message'],
+            "payerMessage" => $params['payer_message'],
             "externalId" => $params['external_id'],
-            "currency" =>  $params['currency'],
+            "currency" => $params['currency'],
             "amount" => $params['amount']];
-
 
 
         $response = self::request('post', $url, $data, $headers);
 
 
-
-        return  $transaction;
+        return $transaction;
 
     }
 
 
-    public function isActive($mobile,$params=null){
+    public function isActive($mobile, $params = null)
+    {
 
         $token = $this->getToken()->getToken();
 
@@ -265,8 +242,7 @@ class Disbursement extends  ApiRequest
         ];
 
 
-        $url =  $this->_baseUrl . "/disbursement/v1_0/accountholder/MSISDN/".$mobile ."/active";
-
+        $url = $this->_baseUrl . "/disbursement/v1_0/accountholder/MSISDN/" . $mobile . "/active";
 
 
         $response = self::request('get', $url, $params, $headers);
@@ -275,8 +251,6 @@ class Disbursement extends  ApiRequest
 
 
     }
-
-
 
 
     /**
@@ -294,13 +268,4 @@ class Disbursement extends  ApiRequest
             throw new \MomoApi\Error\MomoApiError($message);
         }
     }
-
-
-
-
-
-
-
-
-
 }

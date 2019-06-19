@@ -2,7 +2,6 @@
 
 namespace MomoApi\Util;
 
-
 class Util
 {
     private static $isMbstringAvailable = null;

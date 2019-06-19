@@ -21,5 +21,4 @@ class ApiRequestTest extends TestCase
     }
 
 
-
 }

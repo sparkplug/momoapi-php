@@ -2,17 +2,12 @@
 
 namespace MomoApi;
 
-
 use MomoApi\HttpClient\ClientInterface;
 use MomoApi\models\ResourceFactory;
 
 
-
-
 class Collection extends ApiRequest
 {
-
-
 
     public $headers;
 
@@ -20,25 +15,22 @@ class Collection extends ApiRequest
     public $authToken;
 
 
-
-    public  $_baseUrl;
+    public $_baseUrl;
 
     //@var string target environment
-    public  $_targetEnvironment;
+    public $_targetEnvironment;
 
     // @var string the currency of http calls
-    public  $_currency;
+    public $_currency;
 
     // @var string The MomoApi Collections API Secret.
-    public  $_collectionApiSecret;
+    public $_collectionApiSecret;
 
     // @var string The MomoApi collections primary Key
-    public  $_collectionPrimaryKey;
+    public $_collectionPrimaryKey;
 
     // @var string The MomoApi collections User Id
-    public  $_collectionUserId ;
-
-
+    public $_collectionUserId;
 
 
     /**
@@ -47,16 +39,13 @@ class Collection extends ApiRequest
     private static $_httpClient;
 
 
-
-
-
     /**
      * Collection constructor.
      *
      * @param string|null $apiKey
      * @param string|null $apiBase
      */
-    public function __construct($currency=null,$baseUrl=null,$targetEnvironment=null, $collectionApiSecret=null,  $collectionPrimaryKey=null,$collectionUserId=null)
+    public function __construct($currency = null, $baseUrl = null, $targetEnvironment = null, $collectionApiSecret = null, $collectionPrimaryKey = null, $collectionUserId = null)
     {
 
         if (!$currency) {
@@ -96,10 +85,6 @@ class Collection extends ApiRequest
     }
 
 
-
-
-
-
     /**
      * @param array|null $params
      * @param array|string|null $options
@@ -126,17 +111,10 @@ class Collection extends ApiRequest
         $response = self::request('post', $url, $params, $headers);
 
 
-
-
         $obj = ResourceFactory::accessTokenFromJson($response->json);
 
         return $obj;
-
-
     }
-
-
-
 
 
     /**
@@ -153,7 +131,6 @@ class Collection extends ApiRequest
         $token = $this->getToken()->getToken();
 
 
-
         $headers = [
             'Authorization' => 'Bearer ' . $token,
             'Content-Type' => 'application/json',
@@ -165,11 +142,6 @@ class Collection extends ApiRequest
         $response = self::request('get', $url, $params, $headers);
 
         return $response;
-
-
-
-
-
     }
 
 
@@ -179,9 +151,9 @@ class Collection extends ApiRequest
      *
      * @return Transaction The transaction.
      */
-    public function getTransaction($trasaction_id,$params=null)
+    public function getTransaction($trasaction_id, $params = null)
     {
-        $url =  $this->_baseUrl ."/collection/v1_0/requesttopay/". $trasaction_id;
+        $url = $this->_baseUrl . "/collection/v1_0/requesttopay/" . $trasaction_id;
 
         $token = $this->getToken()->getToken();
 
@@ -197,8 +169,6 @@ class Collection extends ApiRequest
         $obj = ResourceFactory::requestToPayFromJson($response->json);
 
         return $obj;
-
-
     }
 
 
@@ -212,46 +182,41 @@ class Collection extends ApiRequest
     {
 
 
-
         self::_validateParams($params);
-        $url =  $this->_baseUrl . "/collection/v1_0/requesttopay";
+        $url = $this->_baseUrl . "/collection/v1_0/requesttopay";
 
         $token = $this->getToken()->getToken();
 
-        $transaction =  Util\Util::uuid();
+        $transaction = Util\Util::uuid();
 
         $headers = [
             'Authorization' => 'Bearer ' . $token,
             'Content-Type' => 'application/json',
             "X-Target-Environment" => $this->_targetEnvironment,
             'Ocp-Apim-Subscription-Key' => MomoApi::getCollectionPrimaryKey(),
-            "X-Reference-Id" =>  $transaction
+            "X-Reference-Id" => $transaction
         ];
 
 
-
         $data = [
-        "payer" =>  [
-            "partyIdType" => "MSISDN",
+            "payer" => [
+                "partyIdType" => "MSISDN",
                 "partyId" => $params['mobile']],
             "payeeNote" => $params['payee_note'],
-            "payerMessage" =>  $params['payer_message'],
+            "payerMessage" => $params['payer_message'],
             "externalId" => $params['external_id'],
-            "currency" =>  $params['currency'],
+            "currency" => $params['currency'],
             "amount" => $params['amount']];
-
 
 
         $response = self::request('post', $url, $data, $headers);
 
 
-
-        return  $transaction;
-
+        return $transaction;
     }
 
 
-    public function isActive($mobile,$params=[])
+    public function isActive($mobile, $params = [])
     {
 
         $token = $this->getToken()->getToken();
@@ -264,12 +229,11 @@ class Collection extends ApiRequest
             'Ocp-Apim-Subscription-Key' => MomoApi::getCollectionPrimaryKey()
         ];
 
-        $url =  $this->_baseUrl . "/collection/v1_0/accountholder/MSISDN/".$mobile ."/active";
+        $url = $this->_baseUrl . "/collection/v1_0/accountholder/MSISDN/" . $mobile . "/active";
 
         $response = self::request('get', $url, $params, $headers);
 
         return $response;
-
     }
 
 
@@ -288,10 +252,4 @@ class Collection extends ApiRequest
             throw new \MomoApi\Error\MomoApiError($message);
         }
     }
-
-
-
-
-
-
 }

@@ -1,20 +1,19 @@
 <?php
+
 namespace MomoApi\models;
 
 class LoginBody implements \JsonSerializable
 {
 
-public $user_id;
+    public $user_id;
 
-public $api_key;
+    public $api_key;
 
 
-
-    public function __construct($user_id,  $api_key)
+    public function __construct($user_id, $api_key)
     {
         $this->user_id = $user_id;
         $this->api_key = $api_key;
-
     }
 
 
@@ -28,5 +27,4 @@ public $api_key;
 
         return $data;
     }
-
 }

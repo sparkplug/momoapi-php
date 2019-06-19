@@ -1,19 +1,19 @@
 <?php
+
 namespace MomoApi\models;
 
 class Payer implements \JsonSerializable
 {
 
-public $partyIdType;
+    public $partyIdType;
 
-public $partyId;
+    public $partyId;
 
 
-    public function __construct($partyIdType,$partyId)
+    public function __construct($partyIdType, $partyId)
     {
         $this->partyIdType = $partyIdType;
         $this->partyId = $partyId;
-
     }
 
 
@@ -27,5 +27,4 @@ public $partyId;
 
         return $data;
     }
-
 }

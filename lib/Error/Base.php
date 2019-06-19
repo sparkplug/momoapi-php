@@ -12,7 +12,8 @@ abstract class Base extends Exception
         $httpBody = null,
         $jsonBody = null,
         $httpHeaders = null
-    ) {
+    )
+    {
         parent::__construct($message);
         $this->httpStatus = $httpStatus;
         $this->httpBody = $httpBody;
@@ -61,7 +62,7 @@ abstract class Base extends Exception
 
     public function __toString()
     {
-        $id = $this->requestId ? " from API request '{$this->requestId}'": "";
+        $id = $this->requestId ? " from API request '{$this->requestId}'" : "";
         $message = explode("\n", parent::__toString());
         $message[0] .= $id;
         return implode("\n", $message);

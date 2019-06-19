@@ -24,7 +24,8 @@ class RemittanceTest
     }
 
 
-    public function  testGetToken(){
+    public function testGetToken()
+    {
 
         $rem = new Remittance();
 
@@ -34,7 +35,8 @@ class RemittanceTest
 
     }
 
-    public function  testGetBalance(){
+    public function testGetBalance()
+    {
 
         $rem = new Remittance();
 
@@ -45,23 +47,21 @@ class RemittanceTest
     }
 
 
-
-    public function testTransfer(){
-
+    public function testTransfer()
+    {
 
         $rem = new Remittance();
 
-        $params =  ['mobile'=>"256782181656",'payee_note'=> "34", 'payer_message'=> "12", 'external_id'=> "ref", 'currency' => "EUR", 'amount' => "500" ];
+        $params = ['mobile' => "256782181656", 'payee_note' => "34", 'payer_message' => "12", 'external_id' => "ref", 'currency' => "EUR", 'amount' => "500"];
 
-        $t= $rem->transfer($params);
+        $t = $rem->transfer($params);
 
         $this->assertFalse(is_null($t));
 
-        $transaction=  $rem->getTransaction($t);
+        $transaction = $rem->getTransaction($t);
 
-        $this->assertFalse(is_null( $transaction->getStatus()));
+        $this->assertFalse(is_null($transaction->getStatus()));
 
 
     }
-
 }
