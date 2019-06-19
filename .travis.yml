@@ -24,8 +24,6 @@ before_install:
   # will occasionally fail intermittently.
   - travis_retry composer install
 
-before_script:
-- travis_retry composer update ${COMPOSER_FLAGS} --no-interaction --prefer-dist
 
 script: ./build.php ${AUTOLOAD}
 
