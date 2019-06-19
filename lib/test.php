@@ -2,7 +2,7 @@
 
 namespace MomoApi;
 
-require_once("Collection.php");
+require_once "Collection.php";
 
 class Test
 {

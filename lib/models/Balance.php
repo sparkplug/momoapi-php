@@ -4,11 +4,11 @@ namespace MomoApi\models;
 class Balance  implements \JsonSerializable
 {
 
-  public $description;
+    public $description;
 
-  public $availableBalance;
+    public $availableBalance;
 
-  public $currency;
+    public $currency;
 
 
     public function __construct($description,$availableBalance,$currency)

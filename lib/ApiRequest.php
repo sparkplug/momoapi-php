@@ -111,8 +111,8 @@ class ApiRequest
     }
 
     /**
-     * @param string $method
-     * @param string $url
+     * @param string     $method
+     * @param string     $url
      * @param array|null $params
      * @param array|null $headers
      *
@@ -148,11 +148,10 @@ class ApiRequest
     }
 
     /**
-     * @param string $rbody A JSON string.
-     * @param int $rcode
-     * @param array $rheaders
-     * @param array $resp
-     *
+     * @param string $rbody    A JSON string.
+     * @param int    $rcode
+     * @param array  $rheaders
+     * @param array  $resp
      */
     public function handleErrorResponse($rbody, $rcode, $rheaders, $resp)
     {
@@ -179,10 +178,10 @@ class ApiRequest
      * @static
      *
      * @param string $rbody
-     * @param int $rcode
-     * @param array $rheaders
-     * @param array $resp
-     * @param array $errorData
+     * @param int    $rcode
+     * @param array  $rheaders
+     * @param array  $resp
+     * @param array  $errorData
      *
      * @return MomoApiError
      */
@@ -194,24 +193,24 @@ class ApiRequest
         $type = isset($errorData['type']) ? $errorData['type'] : null;
 
         switch ($rcode) {
-            case 400:
-                // 'rate_limit' code is deprecated, but left here for backwards compatibility
-                // for API versions earlier than 2015-09-08
-                if ($code == 'rate_limit') {
-                    return new Error\RateLimit($msg, $param, $rcode, $rbody, $resp, $rheaders);
-                }
-                if ($type == 'idempotency_error') {
-                    return new Error\Idempotency($msg, $rcode, $rbody, $resp, $rheaders);
-                }
+        case 400:
+            // 'rate_limit' code is deprecated, but left here for backwards compatibility
+            // for API versions earlier than 2015-09-08
+            if ($code == 'rate_limit') {
+                return new Error\RateLimit($msg, $param, $rcode, $rbody, $resp, $rheaders);
+            }
+            if ($type == 'idempotency_error') {
+                return new Error\Idempotency($msg, $rcode, $rbody, $resp, $rheaders);
+            }
 
             // intentional fall-through
-            case 404:
-                return new Error\InvalidRequest($msg, $param, $rcode, $rbody, $resp, $rheaders);
-            case 401:
-                return new Error\Authentication($msg, $rcode, $rbody, $resp, $rheaders);
+        case 404:
+            return new Error\InvalidRequest($msg, $param, $rcode, $rbody, $resp, $rheaders);
+        case 401:
+            return new Error\Authentication($msg, $rcode, $rbody, $resp, $rheaders);
 
-            default:
-                return new Error\MomoApiError($msg, $rcode, $rbody, $resp, $rheaders);
+        default:
+            return new Error\MomoApiError($msg, $rcode, $rbody, $resp, $rheaders);
         }
     }
 
@@ -242,8 +241,8 @@ class ApiRequest
 
     /**
      * @param string $rbody
-     * @param int $rcode
-     * @param array $rheaders
+     * @param int    $rcode
+     * @param array  $rheaders
      *
      * @return mixed
      * @throws Error\MomoApiError

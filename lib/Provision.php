@@ -2,7 +2,7 @@
 
 namespace MomoApi;
 
-require_once("Util/Util.php");
+require_once "Util/Util.php";
 
 class Provision
 {
@@ -27,21 +27,22 @@ class Provision
 
         $userUrl = "https://ericssonbasicapi2.azure-api.net/v1_0/apiuser/" . $token . "/apikey";
 
-//curl_setopt($ch, CURLOPT_POST, 1);
-//curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "post");
+        //curl_setopt($ch, CURLOPT_POST, 1);
+        //curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "post");
 
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
         curl_setopt($ch, CURLOPT_FAILONERROR, true);
-//curl_setopt($ch, CURLOPT_VERBOSE, 1);
+        //curl_setopt($ch, CURLOPT_VERBOSE, 1);
         curl_setopt($ch, CURLOPT_URL, $url);
-//curl_setopt($ch, CURLOPT_HEADER,false);
+        //curl_setopt($ch, CURLOPT_HEADER,false);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-//curl_setopt($ch, CURLINFO_HEADER_OUT, true);
+        //curl_setopt($ch, CURLINFO_HEADER_OUT, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-        curl_setopt($ch, CURLOPT_HTTPHEADER,
+        curl_setopt(
+            $ch, CURLOPT_HTTPHEADER,
             array('Content-Type: application/json',
                 'X-Reference-Id: ' . $token,
                 'Accept: application/json',
@@ -54,7 +55,8 @@ class Provision
         if ($result) {
             curl_setopt($ch, CURLOPT_URL, $userUrl);
 
-            curl_setopt($ch, CURLOPT_HTTPHEADER,
+            curl_setopt(
+                $ch, CURLOPT_HTTPHEADER,
                 array('Content-Type: application/json',
                     'Accept: application/json',
                     'Ocp-Apim-Subscription-Key: ' . trim($apiKey)

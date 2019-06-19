@@ -119,26 +119,28 @@ class TestCase extends \PHPUnit_Framework_TestCase
      * Sets up a request expectation with the provided parameters. The request
      * will actually go through and be emitted.
      *
-     * @param string $method HTTP method (e.g. 'post', 'get', etc.)
-     * @param string $path relative path (e.g. '/v1/charges')
-     * @param array|null $params array of parameters. If null, parameters will
-     *   not be checked.
+     * @param string        $method  HTTP method (e.g. 'post', 'get', etc.)
+     * @param string        $path    relative path (e.g. '/v1/charges')
+     * @param array|null    $params  array of parameters. If null, parameters will
+     *                               not be checked.
      * @param string[]|null $headers array of headers. Does not need to be
-     *   exhaustive. If null, headers are not checked.
-     * @param bool $hasFile Whether the request parameters contains a file.
-     *   Defaults to false.
-     * @param string|null $base base URL
+     *                               exhaustive. If null, headers are not checked.
+     * @param bool          $hasFile Whether the request parameters contains a file.
+     *                               Defaults to false.
+     * @param string|null   $base    base URL
      */
     protected function expectsRequest($method, $path, $params = null, $headers = null, $hasFile = false, $base = null)
     {
         $this->prepareRequestMock($method, $path, $params, $headers, $hasFile, $base)
-            ->will($this->returnCallback(
-                function ($method, $absUrl, $headers, $params, $hasFile) {
-                    $curlClient = HttpClient\CurlClient::instance();
-                    ApiRequest::setHttpClient($curlClient);
-                    return $curlClient->request($method, $absUrl, $headers, $params, $hasFile);
-                }
-            ));
+            ->will(
+                $this->returnCallback(
+                    function ($method, $absUrl, $headers, $params, $hasFile) {
+                        $curlClient = HttpClient\CurlClient::instance();
+                        ApiRequest::setHttpClient($curlClient);
+                        return $curlClient->request($method, $absUrl, $headers, $params, $hasFile);
+                    }
+                )
+            );
     }
 
     /**
@@ -147,15 +149,15 @@ class TestCase extends \PHPUnit_Framework_TestCase
      * prepare the client mocker to expect an invocation of the `request` method
      * with the provided arguments.
      *
-     * @param string $method HTTP method (e.g. 'post', 'get', etc.)
-     * @param string $path relative path (e.g. '/v1/charges')
-     * @param array|null $params array of parameters. If null, parameters will
-     *   not be checked.
+     * @param string        $method  HTTP method (e.g. 'post', 'get', etc.)
+     * @param string        $path    relative path (e.g. '/v1/charges')
+     * @param array|null    $params  array of parameters. If null, parameters will
+     *                               not be checked.
      * @param string[]|null $headers array of headers. Does not need to be
-     *   exhaustive. If null, headers are not checked.
-     * @param bool $hasFile Whether the request parameters contains a file.
-     *   Defaults to false.
-     * @param string|null $base base URL (e.g. 'https://api.MomoApi.com')
+     *                               exhaustive. If null, headers are not checked.
+     * @param bool          $hasFile Whether the request parameters contains a file.
+     *                               Defaults to false.
+     * @param string|null   $base    base URL (e.g. 'https://api.MomoApi.com')
      *
      * @return PHPUnit_Framework_MockObject_Builder_InvocationMocker
      */
@@ -176,14 +178,16 @@ class TestCase extends \PHPUnit_Framework_TestCase
                 $this->identicalTo($absUrl),
                 // for headers, we only check that all of the headers provided in $headers are
                 // present in the list of headers of the actual request
-                $headers === null ? $this->anything() : $this->callback(function ($array) use ($headers) {
-                    foreach ($headers as $header) {
-                        if (!in_array($header, $array)) {
-                            return false;
+                $headers === null ? $this->anything() : $this->callback(
+                    function ($array) use ($headers) {
+                        foreach ($headers as $header) {
+                            if (!in_array($header, $array)) {
+                                return false;
+                            }
                         }
+                        return true;
                     }
-                    return true;
-                }),
+                ),
                 $params === null ? $this->anything() : $this->identicalTo($params),
                 $this->identicalTo($hasFile)
             );
@@ -194,17 +198,18 @@ class TestCase extends \PHPUnit_Framework_TestCase
      * will not actually be emitted, instead the provided response parameters
      * will be returned.
      *
-     * @param string $method HTTP method (e.g. 'post', 'get', etc.)
-     * @param string $path relative path (e.g. '/v1/charges')
-     * @param array|null $params array of parameters. If null, parameters will
-     *   not be checked.
-     * @param string[]|null $headers array of headers. Does not need to be
-     *   exhaustive. If null, headers are not checked.
-     * @param bool $hasFile Whether the request parameters contains a file.
-     *   Defaults to false.
-     * @param array $response
-     * @param integer $rcode
-     * @param string|null $base
+     * @param string        $method   HTTP method (e.g. 'post', 'get', etc.)
+     * @param string        $path     relative path (e.g. '/v1/charges')
+     * @param array|null    $params   array of parameters. If null, parameters will
+     *                                not be checked.
+     * @param string[]|null $headers  array of headers. Does not need to be
+     *                                exhaustive. If null, headers are not
+     *                                checked.
+     * @param bool          $hasFile  Whether the request parameters contains a file.
+     *                                Defaults to false.
+     * @param array         $response
+     * @param integer       $rcode
+     * @param string|null   $base
      *
      * @return array
      */

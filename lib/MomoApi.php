@@ -431,7 +431,7 @@ class MomoApi
 
     /**
      * @param Util\LoggerInterface $logger The logger to which the library
-     *   will produce messages.
+     *                                     will produce messages.
      */
     public static function setLogger($logger)
     {

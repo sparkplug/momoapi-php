@@ -86,7 +86,7 @@ class Collection extends ApiRequest
 
 
     /**
-     * @param array|null $params
+     * @param array|null        $params
      * @param array|string|null $options
      *
      * @return AccessToken The OAuth Token.
@@ -118,7 +118,7 @@ class Collection extends ApiRequest
 
 
     /**
-     * @param array|null $params
+     * @param array|null        $params
      * @param array|string|null $options
      *
      * @return Balance The account balance.
@@ -146,7 +146,7 @@ class Collection extends ApiRequest
 
 
     /**
-     * @param array|null $params
+     * @param array|null        $params
      * @param array|string|null $options
      *
      * @return Transaction The transaction.
@@ -173,7 +173,7 @@ class Collection extends ApiRequest
 
 
     /**
-     * @param array|null $params
+     * @param array|null        $params
      * @param array|string|null $options
      *
      * @return Charge The refunded charge.
