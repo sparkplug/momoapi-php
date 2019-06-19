@@ -250,7 +250,6 @@ class ApiRequest
     private function _interpretResponse($rbody, $rcode, $rheaders)
     {
         $resp = json_decode($rbody, true);
-        echo json_encode($resp);
         if ($rcode == 202) {
             return $resp;
         }
