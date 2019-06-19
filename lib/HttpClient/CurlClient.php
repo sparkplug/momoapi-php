@@ -215,7 +215,7 @@ class CurlClient implements ClientInterface
         $opts[CURLOPT_HEADERFUNCTION] = $headerCallback;
         $opts[CURLOPT_HTTPHEADER] = $headers;
 
-        $opts[CURLOPT_VERBOSE] = 1;
+        //$opts[CURLOPT_VERBOSE] = 1;
 
         $opts[CURLOPT_SSL_VERIFYHOST] = false;
         $opts[CURLOPT_SSL_VERIFYPEER] = false;
