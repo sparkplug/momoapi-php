@@ -23,7 +23,7 @@ class DisbursementTest
 
     public function testGetToken()
     {
-        $disb = new Collection();
+        $disb = new Disbursement();
 
         $token = $disb->getToken();
 
@@ -42,7 +42,7 @@ class DisbursementTest
 
     public function testTransfer()
     {
-        $coll = new Collection();
+        $coll = new Disbursement();
 
         $params = ['mobile' => "256782181656", 'payee_note' => "34", 'payer_message' => "12", 'external_id' => "ref", 'currency' => "EUR", 'amount' => "500"];
 
