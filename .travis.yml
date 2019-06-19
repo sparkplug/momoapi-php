@@ -16,7 +16,6 @@ cache:
 
 env:
   matrix:
-    - AUTOLOAD=1
     - AUTOLOAD=0
 
 before_install:
