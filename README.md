@@ -1,5 +1,14 @@
-# momoapi-php
-MTN MoMo API Bindings for PHP
+# MTN MoMo API PHP Client
+
+<strong>Power your apps with our MTN MoMo API</strong>
+
+<div>
+  Join our active, engaged community: <br>
+  <a href="https://momodeveloper.mtn.com/">Website</a>
+  <span> | </span>
+  <a href="https://spectrum.chat/momo-api-developers/">Spectrum</a>
+  <br><br>
+</div>
 
 [![Build Status](https://travis-ci.com/sparkplug/momoapi-php.svg?branch=master)](https://travis-ci.com/sparkplug/momoapi-php)
 [![Latest Stable Version](https://poser.pugx.org/sparkplug/momoapi-php/v/stable.svg)](https://packagist.org/packages/sparkplug/momoapi-php)
@@ -10,16 +19,15 @@ MTN MoMo API Bindings for PHP
 
 
 
-## Requirements
+# Installation
 
-PHP 5.4.0 and later.
+You are required to have PHP 5.4.0 and later.
 
 ## Composer
 
 You can install the bindings via [Composer](http://getcomposer.org/). Run the following command:
 
 ```bash
-
 composer require sparkplug/momoapi-php
 ```
 
@@ -46,9 +54,6 @@ The bindings require the following extensions in order to work properly:
 - [`mbstring`](https://secure.php.net/manual/en/book.mbstring.php) (Multibyte String)
 
 If you use Composer, these dependencies should be handled automatically. If you install manually, you'll want to make sure that these extensions are available.
-
-## Getting Started
-
 
 # Sandbox Environment
 
@@ -127,7 +132,6 @@ MomoApi::setDisbursementUserId("disbursement_user_id");
 ```
 
 
-
 ## Collections
 
 The collections client can be created with the following paramaters. Note that the `COLLECTION_USER_ID` and `COLLECTION_API_SECRET` for production are provided on the MTN OVA dashboard;
@@ -139,10 +143,6 @@ The collections client can be created with the following paramaters. Note that t
 You can create a collection client with the following:
 
 ```php
-
-
-
-
 $client = Collection();
 ```
 
@@ -160,6 +160,7 @@ $client = Collection();
 
 ```php
 
+
 ```
 
 ## Disbursement
@@ -173,6 +174,7 @@ The Disbursements client can be created with the following paramaters. Note that
 You can create a disbursements client with the following
 
 ```php
+
 
 ```
 
