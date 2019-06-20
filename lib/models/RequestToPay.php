@@ -1,21 +1,25 @@
 <?php
 
 namespace MomoApi\models;
-class RequestToPay  implements \JsonSerializable
+
+class RequestToPay implements \JsonSerializable
 {
+    public $payer;
 
-public $payer;
+    public $payeeNote;
 
-public $payeeNote;
+    public $payerMessage;
 
-public  $payerMessage;
+    public $externalId;
+    public $currency;
+    public $amount;
 
-public $externalId;
-public $currency;
-public $amount;
+    public $status;
+
+    public $financialTransactionId;
 
 
-    public function __construct($payer,$payeeNote,$payerMessage, $externalId,$currency,$amount)
+    public function __construct($payer, $payeeNote, $payerMessage, $externalId, $currency, $amount, $status, $financialTransactionId)
     {
         $this->payer = $payer;
         $this->payeeNote = $payeeNote;
@@ -23,6 +27,8 @@ public $amount;
         $this->externalId = $externalId;
         $this->currency = $currency;
         $this->amount = $amount;
+        $this->status = $status;
+        $this->financialTransactionId = $financialTransactionId;
     }
 
 
@@ -34,11 +40,17 @@ public $amount;
             'payerMessage' => $this->payerMessage,
             'externalId' => $this->externalId,
             'currency' => $this->currency,
-            'amount' => $this->amount
+            'amount' => $this->amount,
+            'status' => $this->status,
+            'financialTransactionId' => $this->financialTransactionId
 
         );
 
         return $data;
     }
 
+    public function getStatus()
+    {
+        return $this->status;
+    }
 }

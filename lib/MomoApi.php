@@ -8,83 +8,68 @@ namespace MomoApi;
  * @package momoApi
  */
 class MomoApi
-
-
 {
 
-
     // @var string the base url of the API
-    public static $baseUrl;
+    const VERSION = '6.35.2';
 
 
     //@var string target environment
-    public static $targetEnvironment;
+    public static $baseUrl;
 
 
     // @var string the currency of http calls
-    public static $currency;
-
+    public static $targetEnvironment;
 
 
     // @var string The MomoApi Collections API Secret.
-    public static $collectionApiSecret;
+    public static $currency;
 
     // @var string The MomoApi collections primary Key
-    public static $collectionPrimaryKey;
+    public static $collectionApiSecret;
 
     // @var string The MomoApi collections User Id
-    public static $collectionUserId ;
-
-
+    public static $collectionPrimaryKey;
 
 
     // @var string The MomoApi remittance API Secret.
-    public static $remittanceApiSecret;
+    public static $collectionUserId;
 
     // @var string The MomoApi remittance primary Key
-    public static $remittancePrimaryKey;
+    public static $remittanceApiSecret;
 
     // @var string The MomoApi remittance User Id
-    public static $remittanceUserId ;
-
-
+    public static $remittancePrimaryKey;
 
 
     // @var string The MomoApi disbursements API Secret.
-    public static $disbursementApiSecret;
+    public static $remittanceUserId;
 
     // @var string The MomoApi disbursements primary Key
-    public static $disbursementPrimaryKey;
+    public static $disbursementApiSecret;
 
     // @var string The MomoApi disbursements User Id
-    public static $disbursementUserId;
-
-
+    public static $disbursementPrimaryKey;
 
 
     // @var boolean Defaults to true.
-    public static $verifySslCerts = false;
-
+    public static $disbursementUserId;
 
 
     // @var Util\LoggerInterface|null The logger to which the library will
     //   produce messages.
-    public static $logger = null;
+    public static $verifySslCerts = false;
 
     // @var int Maximum number of request retries
-    public static $maxNetworkRetries = 0;
+    public static $logger = null;
 
 
     // @var float Maximum delay between retries, in seconds
-    private static $maxNetworkRetryDelay = 2.0;
+    public static $maxNetworkRetries = 0;
 
     // @var float Initial delay between retries, in seconds
+    private static $maxNetworkRetryDelay = 2.0;
     private static $initialNetworkRetryDelay = 0.5;
-
-    const VERSION = '6.35.2';
-
-
-
 
     /**
      * @return string The Base Url.
@@ -93,17 +78,12 @@ class MomoApi
     {
         $burl = getenv("BASE_URL");
 
-        if(isset(self::$baseUrl ))
-        {
+        if (isset(self::$baseUrl)) {
             return self::$baseUrl;
-        }
-
-        else if($burl)
-        {
+        } else if ($burl) {
             return $burl;
-        }
-        else{
-        return "https://ericssonbasicapi2.azure-api.net" ;
+        } else {
+            return "https://ericssonbasicapi2.azure-api.net";
         }
     }
 
@@ -119,7 +99,6 @@ class MomoApi
     }
 
 
-
     /**
      * @return string The currency.
      */
@@ -128,16 +107,14 @@ class MomoApi
 
         $arg = getenv("CURRENCY");
 
-        if(isset(self::$currency))
-        {
+        if (isset(self::$currency)) {
             return self::$currency;
         }
 
-        if($arg)
-        {
+        if ($arg) {
             return $arg;
         }
-        return "UGX" ;
+        return "UGX";
     }
 
 
@@ -158,15 +135,13 @@ class MomoApi
     public static function getTargetEnvironment()
     {
 
-        $targ=  getenv("TARGET_ENVIRONMENT");
-        if(isset(self::$targetEnvironment))
-        {
+        $targ = getenv("TARGET_ENVIRONMENT");
+        if (isset(self::$targetEnvironment)) {
             return self::$targetEnvironment;
         }
 
-        if($targ)
-        {
-            return  $targ;
+        if ($targ) {
+            return $targ;
         }
 
         return "sandbox";
@@ -184,7 +159,6 @@ class MomoApi
     }
 
 
-
     /**
      * @return string The collectionApiSecret.
      */
@@ -193,16 +167,13 @@ class MomoApi
 
         $arg = getenv("COLLECTION_API_SECRET");
 
-        if(isset(self::$collectionApiSecret))
-        {
+        if (isset(self::$collectionApiSecret)) {
             return self::$collectionApiSecret;
         }
 
-        if($arg)
-        {
+        if ($arg) {
             return $arg;
         }
-
     }
 
 
@@ -224,18 +195,14 @@ class MomoApi
     {
         $arg = getenv("COLLECTION_PRIMARY_KEY");
 
-        if(isset(self::$collectionPrimaryKey))
-        {
+        if (isset(self::$collectionPrimaryKey)) {
             return self::$collectionPrimaryKey;
         }
 
-        if($arg)
-        {
+        if ($arg) {
             return $arg;
         }
     }
-
-
 
 
     /**
@@ -255,19 +222,16 @@ class MomoApi
     public static function getCollectionUserId()
     {
 
-        $arg = getenv("COLLECTION_USER_ID");;
+        $arg = getenv("COLLECTION_USER_ID");
 
-        if(isset(self::$collectionUserId ))
-        {
-            return self::$collectionUserId ;
+        if (isset(self::$collectionUserId)) {
+            return self::$collectionUserId;
         }
 
-        if($arg)
-        {
+        if ($arg) {
             return $arg;
         }
     }
-
 
 
     /**
@@ -281,7 +245,6 @@ class MomoApi
     }
 
 
-
     /**
      * @return string The remittanceApiSecret.
      */
@@ -290,13 +253,11 @@ class MomoApi
 
         $arg = getenv("REMITTANCE_API_SECRET");
 
-        if(isset(self::$remittanceApiSecret ))
-        {
+        if (isset(self::$remittanceApiSecret)) {
             return self::$remittanceApiSecret;
         }
 
-        if($arg)
-        {
+        if ($arg) {
             return $arg;
         }
     }
@@ -307,9 +268,9 @@ class MomoApi
      *
      * @param string $remittanceApiSecret
      */
-    public static function setRemittanceApiSecret ($remittanceApiSecret )
+    public static function setRemittanceApiSecret($remittanceApiSecret)
     {
-        self::$remittanceApiSecret  = $remittanceApiSecret ;
+        self::$remittanceApiSecret = $remittanceApiSecret;
     }
 
 
@@ -320,13 +281,11 @@ class MomoApi
     {
         $arg = getenv("REMITTANCE_PRIMARY_KEY");
 
-        if(isset(self::$remittancePrimaryKey ))
-        {
+        if (isset(self::$remittancePrimaryKey)) {
             return self::$remittancePrimaryKey;
         }
 
-        if($arg)
-        {
+        if ($arg) {
             return $arg;
         }
     }
@@ -346,18 +305,16 @@ class MomoApi
     /**
      * @return string The remittanceUserId .
      */
-    public static function getRemittanceUserId ()
+    public static function getRemittanceUserId()
     {
 
         $arg = getenv("REMITTANCE_USER_ID");
 
-        if(isset(self::$remittanceUserId ))
-        {
+        if (isset(self::$remittanceUserId)) {
             return self::$remittanceUserId;
         }
 
-        if($arg)
-        {
+        if ($arg) {
             return $arg;
         }
     }
@@ -381,13 +338,11 @@ class MomoApi
     {
         $arg = getenv("DISBURSEMENT_API_SECRET");
 
-        if(isset(self::$disbursementApiSecret ))
-        {
+        if (isset(self::$disbursementApiSecret)) {
             return self::$disbursementApiSecret;
         }
 
-        if($arg)
-        {
+        if ($arg) {
             return $arg;
         }
     }
@@ -412,17 +367,14 @@ class MomoApi
 
         $arg = getenv("DISBURSEMENT_PRIMARY_KEY");
 
-        if(isset(self::$disbursementPrimaryKey ))
-        {
+        if (isset(self::$disbursementPrimaryKey)) {
             return self::$disbursementPrimaryKey;
         }
 
-        if($arg)
-        {
+        if ($arg) {
             return $arg;
         }
     }
-
 
 
     /**
@@ -439,23 +391,19 @@ class MomoApi
     /**
      * @return string The disbursementUserId .
      */
-    public static function getDisbursementUserId ()
+    public static function getDisbursementUserId()
     {
 
         $arg = getenv("DISBURSEMENT_USER_ID");
 
-        if(isset(self::$disbursementUserId))
-        {
+        if (isset(self::$disbursementUserId)) {
             return self::$disbursementUserId;
         }
 
-        if($arg)
-        {
+        if ($arg) {
             return $arg;
         }
     }
-
-
 
 
     /**
@@ -467,7 +415,6 @@ class MomoApi
     {
         self::$disbursementUserId = $disbursementUserId;
     }
-
 
 
     /**
@@ -484,13 +431,12 @@ class MomoApi
 
     /**
      * @param Util\LoggerInterface $logger The logger to which the library
-     *   will produce messages.
+     *                                     will produce messages.
      */
     public static function setLogger($logger)
     {
         self::$logger = $logger;
     }
-
 
 
     /**
@@ -524,6 +470,4 @@ class MomoApi
     {
         return self::$initialNetworkRetryDelay;
     }
-
-
 }

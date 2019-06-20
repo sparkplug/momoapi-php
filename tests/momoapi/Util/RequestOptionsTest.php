@@ -35,6 +35,4 @@ class RequestOptionsTest extends TestCase
         $this->assertSame('foo', $opts->apiKey);
         $this->assertSame([], $opts->headers);
     }
-
-
 }

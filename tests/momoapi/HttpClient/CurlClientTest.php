@@ -101,18 +101,22 @@ class CurlClientTest extends TestCase
 
         // make sure closure-based options work properly, including argument passing
         $ref = null;
-        $withClosure = new CurlClient(function ($method, $absUrl, $headers, $params, $hasFile) use (&$ref) {
-            $ref = func_get_args();
-            return [];
-        });
+        $withClosure = new CurlClient(
+            function ($method, $absUrl, $headers, $params, $hasFile) use (&$ref) {
+                $ref = func_get_args();
+                return [];
+            }
+        );
 
         $withClosure->request('get', 'https://httpbin.org/status/200', [], [], false);
         $this->assertSame($ref, ['get', 'https://httpbin.org/status/200', [], [], false]);
 
         // this is the last test case that will run, since it'll throw an exception at the end
-        $withBadClosure = new CurlClient(function () {
-            return 'thisShouldNotWork';
-        });
+        $withBadClosure = new CurlClient(
+            function () {
+                return 'thisShouldNotWork';
+            }
+        );
         $this->setExpectedException('MomoApi\Error\MomoApiError', "Non-array value returned by defaultOptions CurlClient callback");
         $withBadClosure->request('get', 'https://httpbin.org/status/200', [], [], false);
     }
@@ -219,6 +223,4 @@ class CurlClientTest extends TestCase
         $this->assertEquals($baseValue * 4, $this->sleepTimeMethod->invoke($curlClient, 3));
         $this->assertEquals($baseValue * 8, $this->sleepTimeMethod->invoke($curlClient, 4));
     }
-
-
 }

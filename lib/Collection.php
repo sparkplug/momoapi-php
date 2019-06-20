@@ -2,50 +2,31 @@
 
 namespace MomoApi;
 
-
 use MomoApi\HttpClient\ClientInterface;
 use MomoApi\models\ResourceFactory;
 
-
-
-
 class Collection extends ApiRequest
 {
-
-
-
     public $headers;
-
 
     public $authToken;
 
-
-
-    public  $_baseUrl;
-
+    public $_baseUrl;
 
     //@var string target environment
-    public  $_targetEnvironment;
-
+    public $_targetEnvironment;
 
     // @var string the currency of http calls
-    public  $_currency;
-
-
+    public $_currency;
 
     // @var string The MomoApi Collections API Secret.
-    public  $_collectionApiSecret;
+    public $_collectionApiSecret;
 
     // @var string The MomoApi collections primary Key
-    public  $_collectionPrimaryKey;
+    public $_collectionPrimaryKey;
 
     // @var string The MomoApi collections User Id
-    public  $_collectionUserId ;
-
-
-
-
-
+    public $_collectionUserId;
 
 
     /**
@@ -54,16 +35,13 @@ class Collection extends ApiRequest
     private static $_httpClient;
 
 
-
-
-
     /**
      * Collection constructor.
      *
      * @param string|null $apiKey
      * @param string|null $apiBase
      */
-    public function __construct($currency=null,$baseUrl=null,$targetEnvironment=null, $collectionApiSecret=null,  $collectionPrimaryKey=null,$collectionUserId=null)
+    public function __construct($currency = null, $baseUrl = null, $targetEnvironment = null, $collectionApiSecret = null, $collectionPrimaryKey = null, $collectionUserId = null)
     {
 
         if (!$currency) {
@@ -103,12 +81,8 @@ class Collection extends ApiRequest
     }
 
 
-
-
-
-
     /**
-     * @param array|null $params
+     * @param array|null        $params
      * @param array|string|null $options
      *
      * @return AccessToken The OAuth Token.
@@ -133,21 +107,14 @@ class Collection extends ApiRequest
         $response = self::request('post', $url, $params, $headers);
 
 
-
-
         $obj = ResourceFactory::accessTokenFromJson($response->json);
 
         return $obj;
-
-
     }
 
 
-
-
-
     /**
-     * @param array|null $params
+     * @param array|null        $params
      * @param array|string|null $options
      *
      * @return Balance The account balance.
@@ -158,7 +125,6 @@ class Collection extends ApiRequest
         $url = $this->_baseUrl . "/collection/v1_0/account/balance";
 
         $token = $this->getToken()->getToken();
-
 
 
         $headers = [
@@ -172,53 +138,98 @@ class Collection extends ApiRequest
         $response = self::request('get', $url, $params, $headers);
 
         return $response;
-
-
-
-
-        $obj = ResourceFactory::balanceFromJson($response->json);
-
-        return $obj;
-
     }
 
 
     /**
-     * @param array|null $params
+     * @param array|null        $params
      * @param array|string|null $options
      *
      * @return Transaction The transaction.
      */
-    public function getTransaction($params = null, $options = null)
+    public function getTransaction($trasaction_id, $params = null)
     {
+        $url = $this->_baseUrl . "/collection/v1_0/requesttopay/" . $trasaction_id;
 
+        $token = $this->getToken()->getToken();
+
+        $headers = [
+            'Authorization' => 'Bearer ' . $token,
+            'Content-Type' => 'application/json',
+            "X-Target-Environment" => $this->_targetEnvironment,
+            'Ocp-Apim-Subscription-Key' => MomoApi::getCollectionPrimaryKey(),
+        ];
+
+        $response = self::request('get', $url, $params, $headers);
+
+        $obj = ResourceFactory::requestToPayFromJson($response->json);
+
+        return $obj;
     }
 
 
     /**
-     * @param array|null $params
+     * @param array|null        $params
      * @param array|string|null $options
      *
      * @return Charge The refunded charge.
      */
-    public function requestToPay($params = null, $options = null)
+    public function requestToPay($params, $options = null)
     {
 
 
-
         self::_validateParams($params);
-        $url = "/collection/v1_0/requesttopay";
+        $url = $this->_baseUrl . "/collection/v1_0/requesttopay";
 
-        $headers=[];
+        $token = $this->getToken()->getToken();
+
+        $transaction = Util\Util::uuid();
+
+        $headers = [
+            'Authorization' => 'Bearer ' . $token,
+            'Content-Type' => 'application/json',
+            "X-Target-Environment" => $this->_targetEnvironment,
+            'Ocp-Apim-Subscription-Key' => MomoApi::getCollectionPrimaryKey(),
+            "X-Reference-Id" => $transaction
+        ];
 
 
-        $response = self::request('post', $url, $params, $headers);
+        $data = [
+            "payer" => [
+                "partyIdType" => "MSISDN",
+                "partyId" => $params['mobile']],
+            "payeeNote" => $params['payee_note'],
+            "payerMessage" => $params['payer_message'],
+            "externalId" => $params['external_id'],
+            "currency" => $params['currency'],
+            "amount" => $params['amount']];
 
 
-        $obj = \Stripe\Util\Util::convertToStripeObject($response->json, $options);
+        $response = self::request('post', $url, $data, $headers);
 
-        return $obj;
 
+        return $transaction;
+    }
+
+
+    public function isActive($mobile, $params = [])
+    {
+
+        $token = $this->getToken()->getToken();
+
+
+        $headers = [
+            'Authorization' => 'Bearer ' . $token,
+            'Content-Type' => 'application/json',
+            "X-Target-Environment" => $this->_targetEnvironment,
+            'Ocp-Apim-Subscription-Key' => MomoApi::getCollectionPrimaryKey()
+        ];
+
+        $url = $this->_baseUrl . "/collection/v1_0/accountholder/MSISDN/" . $mobile . "/active";
+
+        $response = self::request('get', $url, $params, $headers);
+
+        return $response;
     }
 
 
@@ -237,36 +248,4 @@ class Collection extends ApiRequest
             throw new \MomoApi\Error\MomoApiError($message);
         }
     }
-
-
-    /**
-     * @static
-     *
-     * @param HttpClient\ClientInterface $client
-     */
-    public static function setHttpClient($client)
-    {
-        self::$_httpClient = $client;
-    }
-
-
-
-
-    /**
-     * @return HttpClient\ClientInterface
-     */
-    private function httpClient()
-    {
-        if (!self::$_httpClient) {
-            self::$_httpClient = HttpClient\CurlClient::instance();
-        }
-        return self::$_httpClient;
-    }
-
-
-
-
-
-
-
 }

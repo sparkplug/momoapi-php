@@ -28,6 +28,7 @@ class RequestOptions
     /**
      * Unpacks an options array and merges it into the existing RequestOptions
      * object.
+     *
      * @param array|string|null $options a key => value array
      *
      * @return RequestOptions
@@ -59,6 +60,7 @@ class RequestOptions
 
     /**
      * Unpacks an options array into an RequestOptions object
+     *
      * @param array|string|null $options a key => value array
      *
      * @return RequestOptions

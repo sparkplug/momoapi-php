@@ -160,6 +160,13 @@ $client = Collection();
 
 ```php
 
+        $coll = new Collection($currency = "c..", $baseUrl = "url..", $targetEnvironment = "u...", $collectionApiSecret = "u...", $collectionPrimaryKey = "u...", $collectionUserId = "u..."]);
+
+        $params = ['mobile' => "256782181656", 'payee_note' => "34", 'payer_message' => "12", 'external_id' => "ref", 'currency' => "EUR", 'amount' => "500"];
+
+        $t = $coll->requestToPay($params);
+
+        $transaction = $coll->getTransaction($t);
 
 ```
 
@@ -175,6 +182,14 @@ You can create a disbursements client with the following
 
 ```php
 
+        $disbursement = new Disbursement();
+
+        $params = ['mobile' => "256782181656", 'payee_note' => "34", 'payer_message' => "12", 'external_id' => "ref", 'currency' => "EUR", 'amount' => "500"];
+
+        $t = $disbursement->requestToPay($params);
+
+
+        $transaction = $disbursement->getTransaction($t);
 
 ```
 

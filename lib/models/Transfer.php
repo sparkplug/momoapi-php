@@ -1,22 +1,24 @@
 <?php
 
 namespace MomoApi\models;
-class Transfer  implements \JsonSerializable
+
+use JsonSerializable;
+
+class Transfer implements JsonSerializable
 {
 
+    public $payee;
 
-public $payee;
+    public $payeeNote;
 
-public $payeeNote;
+    public $payerMessage;
 
-public $payerMessage;
-
-public $externalId;
-public $currency;
-public $amount;
+    public $externalId;
+    public $currency;
+    public $amount;
 
 
-    public function __construct( $payee,$payeeNote,$payerMessage,$externalId, $currency, $amount )
+    public function __construct($payee, $payeeNote, $payerMessage, $externalId, $currency, $amount)
     {
         $this->payee = $payee;
         $this->payeeNote = $payeeNote;
@@ -42,5 +44,4 @@ public $amount;
 
         return $data;
     }
-
 }

@@ -2,8 +2,7 @@
 
 namespace MomoApi\models;
 
-
-class Account  implements \JsonSerializable
+class Account implements \JsonSerializable
 {
 
 
@@ -12,7 +11,7 @@ class Account  implements \JsonSerializable
     public $currency;
 
 
-    public function __construct($availableBalance,$currency)
+    public function __construct($availableBalance, $currency)
     {
         $this->availableBalance = $availableBalance;
         $this->currency = $currency;
@@ -28,5 +27,4 @@ class Account  implements \JsonSerializable
 
         return $data;
     }
-
 }

@@ -6,16 +6,7 @@ class BaseTest extends TestCase
 {
     public function createFixture($params = [])
     {
-        return $this->getMockForAbstractClass('MomoApi\\Error\\Base', [
-            'message',
-            200,
-            '{"key": "value"}',
-            ['key' => 'value'],
-            [
-                'Some-Header' => 'Some Value',
-                'Request-Id' => 'req_test',
-            ],
-        ]);
+        return $this->getMockForAbstractClass('MomoApi\\Error\\Base', ['message', 200, '{"key": "value"}', ['key' => 'value'], ['Some-Header' => 'Some Value', 'Request-Id' => 'req_test',],]);
     }
 
     public function testGetters()

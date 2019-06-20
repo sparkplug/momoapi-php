@@ -2,6 +2,8 @@
 
 namespace MomoApi;
 
+use MomoApi\Error\MomoApiError;
+
 /**
  * Class ApiRequest
  *
@@ -10,51 +12,45 @@ namespace MomoApi;
 class ApiRequest
 {
 
-    public  $_baseUrl;
+    public $_baseUrl;
 
 
     //@var string target environment
-    public  $_targetEnvironment;
+    public $_targetEnvironment;
 
 
     // @var string the currency of http calls
-    public  $_currency;
-
+    public $_currency;
 
 
     // @var string The MomoApi Collections API Secret.
-    public  $_collectionApiSecret;
+    public $_collectionApiSecret;
 
     // @var string The MomoApi collections primary Key
-    public  $_collectionPrimaryKey;
+    public $_collectionPrimaryKey;
 
     // @var string The MomoApi collections User Id
-    public  $_collectionUserId ;
-
-
+    public $_collectionUserId;
 
 
     // @var string The MomoApi remittance API Secret.
     public $_remittanceApiSecret;
 
     // @var string The MomoApi remittance primary Key
-    public  $_remittancePrimaryKey;
+    public $_remittancePrimaryKey;
 
     // @var string The MomoApi remittance User Id
-    public  $_remittanceUserId ;
-
-
+    public $_remittanceUserId;
 
 
     // @var string The MomoApi disbursements API Secret.
-    public  $_disbursementApiSecret;
+    public $_disbursementApiSecret;
 
     // @var string The MomoApi disbursements primary Key
-    public  $_disbursementPrimaryKey;
+    public $_disbursementPrimaryKey;
 
     // @var string The MomoApi disbursements User Id
-    public  $_disbursementUserId;
-
+    public $_disbursementUserId;
 
 
     /**
@@ -63,14 +59,13 @@ class ApiRequest
     private static $_httpClient;
 
 
-
     /**
      * ApiRequest constructor.
      *
      * @param string|null $apiKey
      * @param string|null $apiBase
      */
-    public function __construct($currency=null)
+    public function __construct($currency = null)
     {
 
         if (!$currency) {
@@ -80,8 +75,6 @@ class ApiRequest
     }
 
 
-
-
     /**
      * @return string The base URL.
      */
@@ -89,9 +82,6 @@ class ApiRequest
     {
         return MomoApi::$baseUrl;
     }
-
-
-
 
 
     /**
@@ -128,19 +118,7 @@ class ApiRequest
      *
      * @return array An array whose first element is an API response and second
      *    element is the API key used to make the request.
-     * @throws Error\Api
-     * @throws Error\Authentication
-     * @throws Error\Card
-     * @throws Error\InvalidRequest
-     * @throws Error\OAuth\InvalidClient
-     * @throws Error\OAuth\InvalidGrant
-     * @throws Error\OAuth\InvalidRequest
-     * @throws Error\OAuth\InvalidScope
-     * @throws Error\OAuth\UnsupportedGrantType
-     * @throws Error\OAuth\UnsupportedResponseType
-     * @throws Error\Permission
-     * @throws Error\RateLimit
-     * @throws Error\Idempotency
+     * @throws Error\MomoApiError
      * @throws Error\ApiConnection
      */
     public function request($method, $url, $params = null, $headers = null)
@@ -164,38 +142,16 @@ class ApiRequest
         );
 
 
-
         $json = $this->_interpretResponse($rbody, $rcode, $rheaders);
         $resp = new ApiResponse($rbody, $rcode, $rheaders, $json);
         return $resp;
     }
 
     /**
-     * @param string $rbody A JSON string.
-     * @param int $rcode
-     * @param array $rheaders
-     * @param array $resp
-     *
-     * @throws Error\InvalidRequest if the error is caused by the user.
-     * @throws Error\Authentication if the error is caused by a lack of
-     *    permissions.
-     * @throws Error\Permission if the error is caused by insufficient
-     *    permissions.
-     * @throws Error\Card if the error is the error code is 402 (payment
-     *    required)
-     * @throws Error\InvalidRequest if the error is caused by the user.
-     * @throws Error\Idempotency if the error is caused by an idempotency key.
-     * @throws Error\OAuth\InvalidClient
-     * @throws Error\OAuth\InvalidGrant
-     * @throws Error\OAuth\InvalidRequest
-     * @throws Error\OAuth\InvalidScope
-     * @throws Error\OAuth\UnsupportedGrantType
-     * @throws Error\OAuth\UnsupportedResponseType
-     * @throws Error\Permission if the error is caused by insufficient
-     *    permissions.
-     * @throws Error\RateLimit if the error is caused by too many requests
-     *    hitting the API.
-     * @throws Error\Api otherwise.
+     * @param string $rbody    A JSON string.
+     * @param int    $rcode
+     * @param array  $rheaders
+     * @param array  $resp
      */
     public function handleErrorResponse($rbody, $rcode, $rheaders, $resp)
     {
@@ -227,7 +183,7 @@ class ApiRequest
      * @param array  $resp
      * @param array  $errorData
      *
-     * @return Error\RateLimit|Error\Idempotency|Error\InvalidRequest|Error\Authentication|Error\Card|Error\Permission|Error\Api
+     * @return MomoApiError
      */
     private static function _specificAPIError($rbody, $rcode, $rheaders, $resp, $errorData)
     {
@@ -247,54 +203,17 @@ class ApiRequest
                     return new Error\Idempotency($msg, $rcode, $rbody, $resp, $rheaders);
                 }
 
-            // intentional fall-through
+                // intentional fall-through
             case 404:
                 return new Error\InvalidRequest($msg, $param, $rcode, $rbody, $resp, $rheaders);
             case 401:
                 return new Error\Authentication($msg, $rcode, $rbody, $resp, $rheaders);
-            case 402:
-                return new Error\Card($msg, $param, $code, $rcode, $rbody, $resp, $rheaders);
-            case 403:
-                return new Error\Permission($msg, $rcode, $rbody, $resp, $rheaders);
-            case 429:
-                return new Error\RateLimit($msg, $param, $rcode, $rbody, $resp, $rheaders);
+
             default:
                 return new Error\MomoApiError($msg, $rcode, $rbody, $resp, $rheaders);
         }
     }
 
-    /**
-     * @static
-     *
-     * @param string|bool $rbody
-     * @param int         $rcode
-     * @param array       $rheaders
-     * @param array       $resp
-     * @param string      $errorCode
-     *
-     * @return null|Error\OAuth\InvalidClient|Error\OAuth\InvalidGrant|Error\OAuth\InvalidRequest|Error\OAuth\InvalidScope|Error\OAuth\UnsupportedGrantType|Error\OAuth\UnsupportedResponseType
-     */
-    private static function _specificOAuthError($rbody, $rcode, $rheaders, $resp, $errorCode)
-    {
-        $description = isset($resp['error_description']) ? $resp['error_description'] : $errorCode;
-
-        switch ($errorCode) {
-            case 'invalid_client':
-                return new Error\OAuth\InvalidClient($errorCode, $description, $rcode, $rbody, $resp, $rheaders);
-            case 'invalid_grant':
-                return new Error\OAuth\InvalidGrant($errorCode, $description, $rcode, $rbody, $resp, $rheaders);
-            case 'invalid_request':
-                return new Error\OAuth\InvalidRequest($errorCode, $description, $rcode, $rbody, $resp, $rheaders);
-            case 'invalid_scope':
-                return new Error\OAuth\InvalidScope($errorCode, $description, $rcode, $rbody, $resp, $rheaders);
-            case 'unsupported_grant_type':
-                return new Error\OAuth\UnsupportedGrantType($errorCode, $description, $rcode, $rbody, $resp, $rheaders);
-            case 'unsupported_response_type':
-                return new Error\OAuth\UnsupportedResponseType($errorCode, $description, $rcode, $rbody, $resp, $rheaders);
-        }
-
-        return null;
-    }
 
     /**
      * @static
@@ -320,33 +239,20 @@ class ApiRequest
     }
 
 
-
-
-
-
     /**
      * @param string $rbody
      * @param int    $rcode
      * @param array  $rheaders
      *
      * @return mixed
-     * @throws Error\Api
-     * @throws Error\Authentication
-     * @throws Error\Card
-     * @throws Error\InvalidRequest
-     * @throws Error\OAuth\InvalidClient
-     * @throws Error\OAuth\InvalidGrant
-     * @throws Error\OAuth\InvalidRequest
-     * @throws Error\OAuth\InvalidScope
-     * @throws Error\OAuth\UnsupportedGrantType
-     * @throws Error\OAuth\UnsupportedResponseType
-     * @throws Error\Permission
-     * @throws Error\RateLimit
-     * @throws Error\Idempotency
+     * @throws Error\MomoApiError
      */
     private function _interpretResponse($rbody, $rcode, $rheaders)
     {
         $resp = json_decode($rbody, true);
+        if ($rcode == 202) {
+            return $resp;
+        }
         $jsonError = json_last_error();
         if ($resp === null && $jsonError !== JSON_ERROR_NONE) {
             $msg = "Invalid response body from API: $rbody "
@@ -371,7 +277,6 @@ class ApiRequest
     }
 
 
-
     /**
      * @return HttpClient\ClientInterface
      */
@@ -382,8 +287,4 @@ class ApiRequest
         }
         return self::$_httpClient;
     }
-
-
-
-
 }

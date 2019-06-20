@@ -1,10 +1,13 @@
 <?php
+
 namespace MomoApi;
 
-require_once("Collection.php");
+require_once "Collection.php";
 
-class Test{
-    function  getToken(){
+class Test
+{
+    public function getToken()
+    {
         $coll = Collection::getToken();
         echo $coll;
     }
@@ -12,12 +15,6 @@ class Test{
 
 
 if (!debug_backtrace()) {
-
     $obj = new Test();
-     $obj->getToken();
+    $obj->getToken();
 }
-
-
-
-
-

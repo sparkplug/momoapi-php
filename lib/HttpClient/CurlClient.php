@@ -2,8 +2,8 @@
 
 namespace MomoApi\HttpClient;
 
-use MomoApi\MomoApi;
 use MomoApi\Error;
+use MomoApi\MomoApi;
 use MomoApi\Util;
 
 // cURL constants are not defined in PHP < 5.5
@@ -28,25 +28,16 @@ if (!defined('CURL_HTTP_VERSION_2TLS')) {
 
 class CurlClient implements ClientInterface
 {
+    const DEFAULT_TIMEOUT = 80;
+    const DEFAULT_CONNECT_TIMEOUT = 30;
     private static $instance;
-
-    public static function instance()
-    {
-        if (!self::$instance) {
-            self::$instance = new self();
-        }
-        return self::$instance;
-    }
-
     protected $defaultOptions;
-
     protected $userAgentInfo;
-
     protected $enablePersistentConnections = null;
-
     protected $enableHttp2 = null;
-
     protected $curlHandle = null;
+    private $timeout = self::DEFAULT_TIMEOUT;
+    private $connectTimeout = self::DEFAULT_CONNECT_TIMEOUT;
 
     /**
      * CurlClient constructor.
@@ -74,19 +65,53 @@ class CurlClient implements ClientInterface
         $this->enableHttp2 = $this->canSafelyUseHttp2();
     }
 
+    public function initUserAgentInfo()
+    {
+        $curlVersion = curl_version();
+        $this->userAgentInfo = [
+            'httplib' => 'curl ' . $curlVersion['version'],
+            'ssllib' => $curlVersion['ssl_version'],
+        ];
+    }
+
+    /**
+     * Indicates whether it is safe to use HTTP/2 or not.
+     *
+     * @return boolean
+     */
+    private function canSafelyUseHttp2()
+    {
+        // Versions of curl older than 7.60.0 don't respect GOAWAY frames
+        // (cf. https://github.com/curl/curl/issues/2416), which MomoApi use.
+        $curlVersion = curl_version()['version'];
+        return (version_compare($curlVersion, '7.60.0') >= 0);
+    }
+
+    public static function instance()
+    {
+        if (!self::$instance) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
     public function __destruct()
     {
         $this->closeCurlHandle();
     }
 
-    public function initUserAgentInfo()
+    /**
+     * Closes the curl handle if initialized. Do nothing if already closed.
+     */
+    private function closeCurlHandle()
     {
-        $curlVersion = curl_version();
-        $this->userAgentInfo = [
-            'httplib' =>  'curl ' . $curlVersion['version'],
-            'ssllib' => $curlVersion['ssl_version'],
-        ];
+        if (!is_null($this->curlHandle)) {
+            curl_close($this->curlHandle);
+            $this->curlHandle = null;
+        }
     }
+
+    // USER DEFINED TIMEOUTS
 
     public function getDefaultOptions()
     {
@@ -98,61 +123,15 @@ class CurlClient implements ClientInterface
         return $this->userAgentInfo;
     }
 
-    /**
-     * @return boolean
-     */
-    public function getEnablePersistentConnections()
-    {
-        return $this->enablePersistentConnections;
-    }
-
-    /**
-     * @param boolean $enable
-     */
-    public function setEnablePersistentConnections($enable)
-    {
-        $this->enablePersistentConnections = $enable;
-    }
-
-    /**
-     * @return boolean
-     */
-    public function getEnableHttp2()
-    {
-        return $this->enableHttp2;
-    }
-
-    /**
-     * @param boolean $enable
-     */
-    public function setEnableHttp2($enable)
-    {
-        $this->enableHttp2 = $enable;
-    }
-
-    // USER DEFINED TIMEOUTS
-
-    const DEFAULT_TIMEOUT = 80;
-    const DEFAULT_CONNECT_TIMEOUT = 30;
-
-    private $timeout = self::DEFAULT_TIMEOUT;
-    private $connectTimeout = self::DEFAULT_CONNECT_TIMEOUT;
-
-    public function setTimeout($seconds)
-    {
-        $this->timeout = (int) max($seconds, 0);
-        return $this;
-    }
-
-    public function setConnectTimeout($seconds)
-    {
-        $this->connectTimeout = (int) max($seconds, 0);
-        return $this;
-    }
-
     public function getTimeout()
     {
         return $this->timeout;
+    }
+
+    public function setTimeout($seconds)
+    {
+        $this->timeout = (int)max($seconds, 0);
+        return $this;
     }
 
     public function getConnectTimeout()
@@ -160,7 +139,11 @@ class CurlClient implements ClientInterface
         return $this->connectTimeout;
     }
 
-    // END OF USER DEFINED TIMEOUTS
+    public function setConnectTimeout($seconds)
+    {
+        $this->connectTimeout = (int)max($seconds, 0);
+        return $this;
+    }
 
     public function request($method, $absUrl, $headers, $params)
     {
@@ -179,25 +162,23 @@ class CurlClient implements ClientInterface
         $params = Util\Util::objectsToIds($params);
 
         if ($method == 'get') {
-
             $opts[CURLOPT_HTTPGET] = 1;
             if (count($params) > 0) {
                 $encoded = Util\Util::encodeParameters($params);
                 $absUrl = "$absUrl?$encoded";
             }
         } elseif ($method == 'post') {
-            $opts[CURLOPT_POST] = 1;
-            $opts[CURLOPT_POSTFIELDS] =  Util\Util::encodeParameters($params);
+            $opts[CURLOPT_POST] = true;
+            $opts[CURLOPT_POSTFIELDS] = json_encode($params);
         } elseif ($method == 'delete') {
             $opts[CURLOPT_CUSTOMREQUEST] = 'DELETE';
             if (count($params) > 0) {
-                $encoded = Util\Util::encodeParameters($params);
+                $encoded = json_encode($params);
                 $absUrl = "$absUrl?$encoded";
             }
         } else {
             throw new Error\MomoApiError("Unrecognized method $method");
         }
-
 
 
         // Create a callback to capture HTTP headers for the response
@@ -234,11 +215,10 @@ class CurlClient implements ClientInterface
         $opts[CURLOPT_HEADERFUNCTION] = $headerCallback;
         $opts[CURLOPT_HTTPHEADER] = $headers;
 
-        $opts[CURLOPT_VERBOSE] = 1;
+        //$opts[CURLOPT_VERBOSE] = 1;
 
         $opts[CURLOPT_SSL_VERIFYHOST] = false;
         $opts[CURLOPT_SSL_VERIFYPEER] = false;
-
 
 
         if (!isset($opts[CURLOPT_HTTP_VERSION]) && $this->getEnableHttp2()) {
@@ -249,6 +229,24 @@ class CurlClient implements ClientInterface
         list($rbody, $rcode) = $this->executeRequestWithRetries($opts, $absUrl);
 
         return [$rbody, $rcode, $rheaders];
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getEnableHttp2()
+    {
+        return $this->enableHttp2;
+    }
+
+    // END OF USER DEFINED TIMEOUTS
+
+    /**
+     * @param boolean $enable
+     */
+    public function setEnableHttp2($enable)
+    {
+        $this->enableHttp2 = $enable;
     }
 
     /**
@@ -293,49 +291,48 @@ class CurlClient implements ClientInterface
     }
 
     /**
-     * @param string $url
-     * @param int $errno
-     * @param string $message
-     * @param int $numRetries
-     * @throws Error\ApiConnection
+     * Resets the curl handle. If the handle is not already initialized, or if persistent
+     * connections are disabled, the handle is reinitialized instead.
      */
-    private function handleCurlError($url, $errno, $message, $numRetries)
+    private function resetCurlHandle()
     {
-        switch ($errno) {
-            case CURLE_COULDNT_CONNECT:
-            case CURLE_COULDNT_RESOLVE_HOST:
-            case CURLE_OPERATION_TIMEOUTED:
-                $msg = "Could not connect to MomoApi ($url).  Please check your "
-                 . "internet connection and try again.  If this problem persists, "
-                 . "you should check MomoApi's service status at "
-                 . "https://twitter.com/stripestatus, or";
-                break;
-            case CURLE_SSL_CACERT:
-            case CURLE_SSL_PEER_CERTIFICATE:
-                $msg = "Could not verify MomoApi's SSL certificate.  Please make sure "
-                 . "that your network is not intercepting certificates.  "
-                 . "(Try going to $url in your browser.)  "
-                 . "If this problem persists,";
-                break;
-            default:
-                $msg = "Unexpected error communicating with MomoApi.  "
-                 . "If this problem persists,";
+        if (!is_null($this->curlHandle) && $this->getEnablePersistentConnections()) {
+            curl_reset($this->curlHandle);
+        } else {
+            $this->initCurlHandle();
         }
-        $msg .= " let us know at support@stripe.com.";
+    }
 
-        $msg .= "\n\n(Network error [errno $errno]: $message)";
+    /**
+     * @return boolean
+     */
+    public function getEnablePersistentConnections()
+    {
+        return $this->enablePersistentConnections;
+    }
 
-        if ($numRetries > 0) {
-            $msg .= "\n\nRequest was retried $numRetries times.";
-        }
+    /**
+     * @param boolean $enable
+     */
+    public function setEnablePersistentConnections($enable)
+    {
+        $this->enablePersistentConnections = $enable;
+    }
 
-        throw new Error\ApiConnection($msg);
+    /**
+     * Initializes the curl handle. If already initialized, the handle is closed first.
+     */
+    private function initCurlHandle()
+    {
+        $this->closeCurlHandle();
+        $this->curlHandle = curl_init();
     }
 
     /**
      * Checks if an error is a problem that we should retry on. This includes both
      * socket errors that may represent an intermittent problem and some special
      * HTTP statuses.
+     *
      * @param int $errno
      * @param int $rcode
      * @param int $numRetries
@@ -388,49 +385,45 @@ class CurlClient implements ClientInterface
     }
 
     /**
-     * Initializes the curl handle. If already initialized, the handle is closed first.
+     * @param string $url
+     * @param int $errno
+     * @param string $message
+     * @param int $numRetries
+     * @throws Error\ApiConnection
      */
-    private function initCurlHandle()
+    private function handleCurlError($url, $errno, $message, $numRetries)
     {
-        $this->closeCurlHandle();
-        $this->curlHandle = curl_init();
-    }
-
-    /**
-     * Closes the curl handle if initialized. Do nothing if already closed.
-     */
-    private function closeCurlHandle()
-    {
-        if (!is_null($this->curlHandle)) {
-            curl_close($this->curlHandle);
-            $this->curlHandle = null;
+        switch ($errno) {
+            case CURLE_COULDNT_CONNECT:
+            case CURLE_COULDNT_RESOLVE_HOST:
+            case CURLE_OPERATION_TIMEOUTED:
+                $msg = "Could not connect to MomoApi ($url).  Please check your "
+                    . "internet connection and try again.  If this problem persists, "
+                    . "you should check MomoApi's service status at "
+                    . "https://twitter.com/stripestatus, or";
+                break;
+            case CURLE_SSL_CACERT:
+            case CURLE_SSL_PEER_CERTIFICATE:
+                $msg = "Could not verify MomoApi's SSL certificate.  Please make sure "
+                    . "that your network is not intercepting certificates.  "
+                    . "(Try going to $url in your browser.)  "
+                    . "If this problem persists,";
+                break;
+            default:
+                $msg = "Unexpected error communicating with MomoApi.  "
+                    . "If this problem persists,";
         }
-    }
+        $msg .= " let us know at mossplix@gmail.com
+        
+        .";
 
-    /**
-     * Resets the curl handle. If the handle is not already initialized, or if persistent
-     * connections are disabled, the handle is reinitialized instead.
-     */
-    private function resetCurlHandle()
-    {
-        if (!is_null($this->curlHandle) && $this->getEnablePersistentConnections()) {
-            curl_reset($this->curlHandle);
-        } else {
-            $this->initCurlHandle();
+        $msg .= "\n\n(Network error [errno $errno]: $message)";
+
+        if ($numRetries > 0) {
+            $msg .= "\n\nRequest was retried $numRetries times.";
         }
-    }
 
-    /**
-     * Indicates whether it is safe to use HTTP/2 or not.
-     *
-     * @return boolean
-     */
-    private function canSafelyUseHttp2()
-    {
-        // Versions of curl older than 7.60.0 don't respect GOAWAY frames
-        // (cf. https://github.com/curl/curl/issues/2416), which MomoApi use.
-        $curlVersion = curl_version()['version'];
-        return (version_compare($curlVersion, '7.60.0') >= 0);
+        throw new Error\ApiConnection($msg);
     }
 
     /**
