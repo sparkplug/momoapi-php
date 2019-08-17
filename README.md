@@ -63,7 +63,7 @@ Next, we need to get the `User ID` and `User Secret` and to do this we shall nee
 
 ```bash
 ## within the project, on the command line. In this example, our domain is akabbo.ug
-$ ./vendor/momoapi-php/lib/Provision.php
+$ php vendor/sparkplug/momoapi-php/lib/Provision.php
 $ providerCallBackHost: https://akabbo.ug
 $ Ocp-Apim-Subscription-Key: f83xx8d8xx6749f19a26e2265aeadbcdeg
 ```
