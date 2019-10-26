@@ -75,7 +75,7 @@ class Provision
             echo "Here is your User Id and API secret : {UserId:" . $token . " , APISecret: " . $res["apiKey"] . " }";
         }
         else{
-            echo "something went wrong"
+            echo "something went wrong";
         }
     }
 }
