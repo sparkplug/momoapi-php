@@ -1,6 +1,5 @@
 #!/usr/bin/php
 <?php
-
 namespace MomoApi;
 
 require_once "Util/Util.php";
