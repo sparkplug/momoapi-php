@@ -1,3 +1,4 @@
+#!/usr/bin/php
 <?php
 
 namespace MomoApi;
@@ -19,7 +20,6 @@ class Provision
         $url = 'https://ericssonbasicapi2.azure-api.net/v1_0/apiuser';
 
         $token = Util\Util::uuid();
-        echo $data;
         $ch = curl_init();
 
         $userUrl = "https://ericssonbasicapi2.azure-api.net/v1_0/apiuser/" . $token . "/apikey";
@@ -73,6 +73,9 @@ class Provision
 
 
             echo "Here is your User Id and API secret : {UserId:" . $token . " , APISecret: " . $res["apiKey"] . " }";
+        }
+        else{
+            echo "something went wrong"
         }
     }
 }
