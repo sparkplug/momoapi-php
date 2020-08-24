@@ -35,7 +35,7 @@ class RequestToPay implements \JsonSerializable
     public function jsonSerialize()
     {
         $data = array(
-            'payer' => array($this->payer->partyIdType, $this->payer->partyId),
+            'payer' => array($this->payer['partyIdType'], $this->payer['partyId']),
             'payeeNote' => $this->payeeNote,
             'payerMessage' => $this->payerMessage,
             'externalId' => $this->externalId,
