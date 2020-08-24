@@ -1,11 +1,12 @@
 <?php
-
 namespace MomoApi;
+
+use PHPUnit\Framework\TestCase as PHPUnit_Framework_TestCase;
 
 /**
  * Base class for MomoApi test cases.
  */
-class TestCase extends \PHPUnit_Framework_TestCase
+class TestCase extends PHPUnit_Framework_TestCase
 {
     public $_baseUrl;
 

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit backupGlobals="false"
+         backupStaticAttributes="false"
+         bootstrap="tests/bootstrap.php"
+         colors="true"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         processIsolation="false"
+         stopOnFailure="false"
+         stopOnError="false"
+         beStrictAboutTestsThatDoNotTestAnything="false">
+
+    <testsuites>
+        <testsuite name="UTIL tests">
+            <directory suffix="Test.php">tests/momoapi/Util</directory>
+        </testsuite>
+        <testsuite name="Feature Tests">
+            <directory suffix="Test.php">tests/momoapi/HttpClient</directory>
+        </testsuite>
+
+        <testsuite name="Error Tests">
+            <directory suffix="Test.php">tests/momoapi/Error</directory>
+        </testsuite>
+    </testsuites>
+
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">lib</directory>
+        </whitelist>
+    </filter>
+
+    <php>
+        <env name="APP_ENV" value="testing"/>
+    </php>
+
+</phpunit>

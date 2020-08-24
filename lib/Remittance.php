@@ -2,9 +2,9 @@
 
 namespace MomoApi;
 
-use MomoApi\HttpClient\ClientInterface;
-use MomoApi\models\ResourceFactory;
 use MomoApi\Util\Util;
+use MomoApi\models\ResourceFactory;
+use MomoApi\HttpClient\ClientInterface;
 
 class Remittance extends ApiRequest
 {
